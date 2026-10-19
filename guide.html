@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPO Desk · Plain-English Guide</title>
+<style>
+@page{size:A4;margin:18mm 16mm}
+body{font:11pt/1.6 "Segoe UI",Inter,system-ui,sans-serif;color:#0E1A2B;background:#F2F4F7;margin:0}
+.w{max-width:780px;margin:0 auto;padding:32px 24px;background:#fff}
+@media print{body{background:#fff}.w{padding:0}}
+h1{font:600 28pt/1.15 Georgia,serif;margin:0 0 6px}
+h2{font:600 16pt Georgia,serif;margin:28px 0 8px;padding-top:10px;border-top:2px solid #A8844F;page-break-after:avoid}
+h3{font-size:11.5pt;margin:16px 0 4px}
+.sub{color:#465062;font-size:12pt}
+.box{border:1px solid #E1E5EB;border-left:3px solid #A8844F;background:#F7F8FA;padding:10px 14px;margin:12px 0;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:10pt;page-break-inside:avoid}
+th,td{border-bottom:1px solid #E1E5EB;padding:6px 8px;text-align:left;vertical-align:top}
+th{color:#626A77;font-weight:600}
+.g{color:#1D6B52;font-weight:600}.r{color:#9A2F2F;font-weight:600}.b{color:#1F3A5F;font-weight:600}.p{color:#5B5283;font-weight:600}
+.range{position:relative;height:46px;margin:10px 30px}
+.range .t{position:absolute;left:0;right:0;top:20px;height:2px;background:#E1E5EB}
+.range .s{position:absolute;top:19px;height:4px;background:#A8844F;left:20%;width:62%}
+.range .z{position:absolute;left:12%;top:10px;width:1px;height:22px;background:#626A77}
+.range .d{position:absolute;top:13px;width:14px;height:14px;margin-left:-7px;border-radius:50%;border:2px solid #0E1A2B;background:#fff}
+ol li,ul li{margin:4px 0}
+.small{font-size:9.5pt;color:#626A77}
+</style></head><body><div class="w">
+
+<h1>IPO Desk: a plain-English guide</h1>
+<p class="sub">What every number means, how to move around, and a simple routine for deciding which IPOs to apply for.</p>
+<p class="small">Dashboard: djsoni99-ux.github.io/ipo-gmp-dashboard · Backtest: …/backtest.html · This guide: …/guide.html</p>
+
+<h2>1. The idea in one paragraph</h2>
+<p>When a company lists on the stock exchange (an IPO), people apply for shares at a fixed price. If you get shares ("allotment"), you can sell them on the first trading day, hopefully for more. This dashboard reads public data every few minutes and tells you, for each IPO open today, whether it is worth applying, how likely you are to actually get shares, and what you can expect to make or lose. Nothing to install: it runs on GitHub, even when your laptop is off.</p>
+
+<h2>2. Does it refresh by itself?</h2>
+<table><tr><th>What</th><th>How often</th><th>Do you need to do anything?</th></tr>
+<tr><td>Grey-market price (GMP) and subscription on the page</td><td>Every 3 minutes while the tab is open</td><td>No. Watch the dot top-right: <span class="g">green "Live"</span> means fresh.</td></tr>
+<tr><td>Full data snapshot (all sources)</td><td>Every hour, 7:30 AM to 10:30 PM IST</td><td>No. Runs on GitHub automatically.</td></tr>
+<tr><td>Company financials, anchors, broker views</td><td>Every hour for live IPOs</td><td>No.</td></tr>
+<tr><td>History used for the backtest</td><td>Once a day, 9:30 PM IST</td><td>No.</td></tr>
+</table>
+<div class="box">You never <i>have</i> to refresh. If you come back to a tab left open for hours, press <b>Refresh</b> (top-right) for live data instantly or reload the page to be sure. If the dot is <b>amber</b>, the live feed could not be reached and you are seeing the last snapshot.</div>
+
+<h2>3. Words you will see</h2>
+<table>
+<tr><th style="width:28%">Word</th><th>Meaning in plain English</th></tr>
+<tr><td>Price band</td><td>The price range for the shares, e.g. ₹665–700. Apply at the top of the band ("cut-off").</td></tr>
+<tr><td>Lot / minimum application</td><td>Shares come in bundles. The smallest bundle you can apply for and its cost (SME IPOs: 2 lots, usually ₹1–3 lakh).</td></tr>
+<tr><td>GMP (grey-market premium)</td><td>An unofficial bet on how much above the issue price the share will list. ₹100 GMP on a ₹500 share suggests listing near ₹600 (+20%). Not guaranteed.</td></tr>
+<tr><td>Subscription (e.g. 31x)</td><td>Demand. 31x means people asked for 31 times more shares than available.</td></tr>
+<tr><td>Allotment odds (1 in N)</td><td>Your chance of getting shares. Roughly 1 ÷ retail subscription. 1 in 31 means you will usually get nothing and your money is simply refunded.</td></tr>
+<tr><td>Mainboard vs SME</td><td>Mainboard = larger companies. SME = small companies, bigger tickets, much riskier and more volatile.</td></tr>
+<tr><td>QIB / NII / Retail</td><td>Big institutions / wealthy investors / ordinary investors like you. Strong QIB demand is a good sign.</td></tr>
+<tr><td>Anchor investors</td><td>Big funds that buy a day before the IPO opens. Lots of mutual funds in the anchor book is a quality signal.</td></tr>
+<tr><td>OFS (offer for sale)</td><td>Existing owners selling their shares; the company gets no new money. "Pure OFS" is a mild caution.</td></tr>
+<tr><td>P/E, EV/EBITDA, P/B</td><td>How expensive the share is compared to its profit, earnings and book value. Lower is cheaper. Compared with similar recent IPOs.</td></tr>
+</table>
+
+<h2>4. Navigating the dashboard</h2>
+<p>The bar at the top has four links: <b>Today</b>, <b>Live calls</b>, <b>Track record</b>, <b>Backtest</b>. On the right: the live dot, <b>Plan</b> and the refresh button. The <b>All / Mainboard / SME</b> switch filters every section.</p>
+<h3>Today (the top block)</h3>
+<p>A one-line summary ("Two worth applying for, one lottery bid…"), the names, which ones <b>close today</b> (approve your UPI mandate before 5 PM), and four figures: cash needed, expected profit, IPOs closing today, and how accurate GMP has been lately.</p>
+<h3>Live calls (the ranked list)</h3>
+<p>Every open or upcoming IPO, best first. Each row shows the <b>call</b>, a <b>score out of 100</b>, a <b>grade out of 5</b>, the GMP, your odds, expected rupees per application, and the "base case" listing gain. <b>Click any row</b> to open the full analysis panel on the right. Press Esc or the X to close it.</p>
+<table>
+<tr><th>Call</th><th>What it means for you</th></tr>
+<tr><td class="g">Apply</td><td>Good signals and a reasonable chance of allotment. Worth applying.</td></tr>
+<tr><td class="p">Lottery bid</td><td>Good IPO, but so oversubscribed you will probably not get shares. Apply if the cash is free (it is refunded), but don't count on it.</td></tr>
+<tr><td class="b">Consider</td><td>Mixed signals. Read the reasons in the panel before deciding.</td></tr>
+<tr><td class="r">Skip</td><td>Weak signals. Historically most IPOs like this listed flat or lower.</td></tr>
+<tr><td>Await GMP / Closed</td><td>No grey-market quote yet / bidding has ended (listing coming).</td></tr>
+</table>
+
+<h2>5. Reading the analysis panel</h2>
+<ol>
+<li><b>Recommendation</b>: the call in one paragraph, with the main reasons for and against, plus the long-term view.</li>
+<li><b>Four figures</b>: GMP, allotment odds, expected profit per application, and minimum application amount.</li>
+<li><b>Outcome range if allotted</b> (explained below).</li>
+<li><b>Research view · long term</b>: is it a good business at a fair price (for holding after listing)?</li>
+<li><b>What drives the listing call</b>: green + and red − reasons.</li>
+<li><b>Score breakdown</b>: six bars showing what the score is made of.</li>
+<li>Demand, financials, recent similar IPOs, and buttons <b>Add to plan</b> and <b>Prospectus details</b>.</li>
+</ol>
+
+<h2>6. How to read "Outcome range if allotted"</h2>
+<div class="range"><div class="t"></div><div class="z"></div><div class="s"></div><div class="d" style="left:20%"></div><div class="d" style="left:55%;background:#0E1A2B"></div><div class="d" style="left:82%"></div></div>
+<table><tr><th>Bear (left dot)</th><th>Base (filled dot)</th><th>Bull (right dot)</th></tr>
+<tr><td>A bad but realistic listing: what the worst 10% of similar past IPOs did.</td><td>The most likely listing: today's GMP blended with how similar IPOs actually listed.</td><td>A great listing: the best 10% of similar IPOs, or today's GMP, whichever is higher.</td></tr></table>
+<ul>
+<li>The <b>thin vertical line</b> is 0% (listing exactly at your price). Dots to its left mean a loss.</li>
+<li>Under each dot: the % gain and the <b>rupees you would make or lose for one application, after charges</b>, <i>if you get shares</i>.</li>
+<li>Example: Bear +14% (₹1,895), Base +62% (₹8,963), Bull +96% (₹13,847). Even the bad case is a profit, so the risk is low. If the bear dot sits well left of the line (say −20%), you could lose money if things go wrong.</li>
+<li>Remember: these are "if allotted". Your <b>expected</b> profit is lower because you often won't get shares. That is the "Expected / application" figure (odds × base case).</li>
+</ul>
+
+<h2>7. The research view (for holding beyond listing day)</h2>
+<p>Modelled on how CRISIL, Renaissance Capital and Indian broker research desks judge IPOs.</p>
+<ul>
+<li><b>Grade 1–5</b>: business quality compared with other recent IPOs of the same type. 5 = top fifth, 1 = bottom fifth. Built from growth, profitability (ROCE, ROE, margins), debt, and governance (fresh money vs owners selling, promoter stake, what the money is used for).</li>
+<li><b>Valuation</b>: Discount / In line / Premium / Stretched compared with similar recent IPOs.</li>
+<li><b>Long-term view</b>: <span class="g">Positive</span>, Neutral or <span class="r">Cautious</span>.</li>
+<li>A company can be <b>Apply</b> for listing but <b>Cautious</b> long-term. That means: apply for the listing gain, sell on listing day, don't hold.</li>
+<li>Red flags such as "profit up 300% just before the IPO, check it is sustainable" are worth reading.</li>
+</ul>
+
+<h2>8. Plan: how much cash and when it comes back</h2>
+<p>In the panel, press <b>Add to plan</b>. Then press <b>Plan</b> (top bar) to see the peak cash blocked, expected profit, the date your money is refunded if not allotted (about 2 working days after closing), and when it returns after selling on listing.</p>
+
+<h2>9. Track record (last 30 days)</h2>
+<p>Shows how reliable GMP has been recently. The scatter chart plots what GMP said against what actually happened; dots under the dashed line listed worse than GMP suggested. "If allotted every time" vs "With real odds" shows why IPO profits are smaller than they look: you mostly get shares in the weak IPOs. "Show every listing" lists each IPO with its GMP path and the actual result.</p>
+
+<h2>10. Backtest page</h2>
+<p>A report on 13 months of history, split SME / Mainboard / Both (switch at top-right). Each chapter answers one question in a highlighted sentence. Key lessons so far:</p>
+<ul>
+<li>Applying to <b>every</b> IPO lost money once allotment odds are counted. Being selective is what works.</li>
+<li>The dashboard's Skip calls listed higher only about 40% of the time; its Apply calls about 85–93%.</li>
+<li>GMP is good for <i>direction</i> (will it list up?) but typically misses the <i>size</i> by about 8–11 points.</li>
+<li>For mainboard IPOs, higher grades listed better. For SME, fundamentals told us little.</li>
+</ul>
+
+<h2>11. A simple routine (5 minutes a day)</h2>
+<ol>
+<li>Open the dashboard. Check the dot is green.</li>
+<li>Read the <b>Today</b> headline and note anything that <b>closes today</b>.</li>
+<li>In Live calls, look at <b>Apply</b> and <b>Lottery bid</b> rows. Open each one.</li>
+<li>In the panel, check: the bear case (can you live with that loss?), the red − reasons, and the minimum application amount.</li>
+<li>Add the ones you like to <b>Plan</b> and check you have the cash.</li>
+<li>Apply through your broker / bank UPI before the closing day, at the cut-off price. Approve the UPI mandate.</li>
+<li>On allotment day check your status. If allotted and the long-term view isn't Positive, consider selling on listing day.</li>
+<li>Be extra careful with <b>SME</b>: big tickets, thin trading, larger losses possible.</li>
+</ol>
+
+<h2>12. Important limits</h2>
+<ul>
+<li>GMP is unofficial and can disappear overnight.</li>
+<li>Odds are estimates (application counts are not published).</li>
+<li>The tool reads public numbers only; it cannot read a company's full prospectus (lawsuits, related-party deals). Glance at "Prospectus details" for bigger bets.</li>
+<li>This is analysis, not investment advice. Only invest money you can afford to have blocked or to lose.</li>
+</ul>
+</div></body></html>

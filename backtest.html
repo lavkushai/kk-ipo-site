@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPO Desk · Backtest</title>
+<meta name="description" content="Does applying to Indian IPOs pay once allotment odds are counted? A point-in-time test of the Decision Desk calls, the rules that paid, what drives listing gains, and how far GMP can be trusted.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ui.css">
+<style>
+/* report layout: sticky contents rail + reading column */
+.report{display:grid;grid-template-columns:200px minmax(0,1fr);gap:56px;margin-top:56px}
+.toc{position:sticky;top:96px;align-self:start;font-size:13.5px}
+.toc ol{list-style:none;margin:10px 0 0;padding:0;border-left:1px solid var(--line)}
+.toc a{display:block;padding:7px 0 7px 14px;margin-left:-1px;border-left:2px solid transparent;text-decoration:none;color:var(--ink-3);transition:color .2s,border-color .2s}
+.toc a:hover{color:var(--ink)}
+.toc a.on{color:var(--ink);border-left-color:var(--gold);font-weight:500}
+.toc .n{display:inline-block;width:20px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+@media (max-width:980px){.report{grid-template-columns:1fr;gap:0}.toc{display:none}}
+.report>*{min-width:0}
+@media (max-width:560px){.brand b{display:none}.appbar .seg button{padding:6px 10px}.appbar .seg .c{display:none}.brow{grid-template-columns:96px 1fr 108px;gap:10px}}
+.chapter{padding-bottom:64px;margin-bottom:56px;border-bottom:1px solid var(--line)}
+.chapter:last-of-type{border-bottom:0}
+.ch-n{font:500 13px var(--sans);color:var(--gold-ink);font-variant-numeric:tabular-nums}
+.chapter h2{font:500 30px/1.18 var(--serif);letter-spacing:-.01em;margin:6px 0 18px}
+.verdict-figs{margin-top:32px}
+.brow{display:grid;grid-template-columns:120px 1fr 140px;gap:16px;align-items:center;font-size:13.5px;padding:10px 0;border-bottom:1px solid var(--line)}
+.brow:last-child{border-bottom:0}
+.brow .r{text-align:right}
+.brow .r small{display:block;color:var(--ink-3);font-size:12px}
+.thin{color:var(--ink-3)}
+.mini{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--line);border-radius:var(--r);margin-top:16px}
+.mini>div{padding:12px 14px}
+.mini>div:nth-child(odd){border-right:1px solid var(--line)}
+.mini>div:nth-child(n+3){border-top:1px solid var(--line)}
+.mini .l{font-size:12px;color:var(--ink-3)}
+.mini .v{font:500 20px/1.2 var(--serif);margin-top:2px}
+.mini .h{font-size:12px;color:var(--ink-2)}
+.drv-title{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.drv-title h3{font:500 18px var(--serif);margin:0}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px 18px;margin-top:16px}
+.form label{display:flex;flex-direction:column;font-size:12.5px;color:var(--ink-2);gap:5px;font-weight:500}
+.form input[type=number]{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;height:38px}
+.form .chk{flex-direction:row;align-items:center;gap:8px}
+details.disclose>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font:500 18px var(--serif);padding:4px 0}
+details.disclose>summary::-webkit-details-marker{display:none}
+details.disclose>summary svg{transition:transform .2s var(--ease)}
+details.disclose[open]>summary svg{transform:rotate(90deg)}
+.notes li{margin:8px 0;color:var(--ink-2);font-size:14px}
+.stack{display:grid;gap:24px}
+.stack>*,#ruleDetail>*{min-width:0}
+#ruleDetail{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:8px 28px;align-items:start}
+#ruleDetail .rd-head{grid-column:1/-1}
+#ruleDetail .mini{margin-top:0}
+@media (max-width:760px){#ruleDetail{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="appbar"><div class="in">
+  <a class="brand" href="./" aria-label="IPO Desk home"><span class="mark" aria-hidden="true">IP</span><b>IPO Desk</b></a>
+  <nav class="nav" aria-label="Primary">
+    <a href="./#today">Today</a><a href="./#calls">Live calls</a><a href="./#record">Track record</a><a href="backtest.html" aria-current="page">Backtest</a><a href="guide.html">Guide</a>
+  </nav>
+  <div class="bar-end"><div class="seg" id="tabs" role="group" aria-label="Segment"></div></div>
+</div></header>
+
+<main class="page">
+  <section id="verdict" aria-labelledby="vHead">
+    <div class="eyebrow" id="vEyebrow">Backtest · last 13 months</div>
+    <h1 class="display" id="vHead" style="max-width:24ch">Does applying to IPOs pay?</h1>
+    <p class="lede" id="vLede">Every figure counts the allotment lottery: you are paid only on the shares you actually receive, and the hottest IPOs are the ones you rarely get.</p>
+    <div class="figures verdict-figs" id="vFigs"></div>
+  </section>
+
+  <div class="report">
+    <aside class="toc" aria-label="Contents"><div class="kicker">Contents</div>
+      <ol><li><a href="#q1" data-toc="q1"><span class="n">1</span>Did the calls work?</a></li><li><a href="#q2" data-toc="q2"><span class="n">2</span>Rules that paid</a></li>
+        <li><a href="#q3" data-toc="q3"><span class="n">3</span>What drives gains</a></li><li><a href="#q4" data-toc="q4"><span class="n">4</span>Trusting GMP</a></li>
+        <li><a href="#q5" data-toc="q5"><span class="n">5</span>Research grade</a></li><li><a href="#method" data-toc="method"><span class="n">6</span>Method &amp; settings</a></li></ol></aside>
+
+    <div>
+      <section class="chapter" id="q1" aria-labelledby="q1h">
+        <div class="ch-n">01</div><h2 id="q1h">Did the Decision Desk's calls work?</h2>
+        <p class="answer" id="valAnswer"></p>
+        <div class="scroll-x"><table class="tbl" id="valTable"></table></div>
+        <p class="note" id="valNote"></p>
+      </section>
+
+      <section class="chapter" id="q2" aria-labelledby="q2h">
+        <div class="ch-n">02</div><h2 id="q2h">Which rules would have paid?</h2>
+        <p class="answer" id="ruleAnswer"></p>
+        <div class="stack">
+          <div><div class="scroll-x"><table class="tbl" id="rules"></table></div><p class="note">Ranked by realistic net profit, after charges and tax, weighted by allotment odds. Select a rule to see its record. An asterisk marks fewer than 15 IPOs.</p></div>
+          <div class="surface pad" id="ruleDetail"></div>
+        </div>
+      </section>
+
+      <section class="chapter" id="q3" aria-labelledby="q3h">
+        <div class="ch-n">03</div><h2 id="q3h">What actually drives the listing gain?</h2>
+        <p class="answer" id="drvAnswer"></p>
+        <div class="grid-2" id="drivers"></div>
+      </section>
+
+      <section class="chapter" id="q4" aria-labelledby="q4h">
+        <div class="ch-n">04</div><h2 id="q4h">How far can GMP be trusted?</h2>
+        <p class="answer" id="gmpAnswer"></p>
+        <div class="stack">
+          <div><div class="scroll-x"><table class="tbl" id="gmpTable"></table></div></div>
+          <div class="surface pad"><h3 class="sub" style="margin-bottom:6px">Market regime: average listing gain by month</h3><div id="regime"></div></div>
+        </div>
+      </section>
+
+      <section class="chapter" id="q5" aria-labelledby="q5h">
+        <div class="ch-n">05</div><h2 id="q5h">Does the research grade help?</h2>
+        <p class="answer" id="resAnswer"></p>
+        <div class="scroll-x"><table class="tbl" id="resTable"></table></div>
+        <p class="note">The grade follows how established evaluators work: CRISIL's IPO grading (business and financial prospects, management, governance, graded 1 to 5 relative to other listed companies and explicitly not a price opinion); Renaissance Capital (fundamentals, governance, valuation against listed peers, insider selling); and Indian broker IPO notes (valuation against peers as the main reason to avoid, growth and return on capital as the reason to pay up). Pillars: growth 30, profitability 30, balance sheet 15, governance and issue structure 25. Grades are quintiles within each segment. "After listing" compares the latest price with the listing-day close, from Chittorgarh's sector tables; it covers only part of the sample and a few weeks of trading.</p>
+      </section>
+
+      <section class="chapter" id="method" aria-labelledby="mh">
+        <div class="ch-n">06</div><h2 id="mh">Method and settings</h2>
+        <ul class="notes" style="padding-left:18px;margin:0">
+          <li><b>The trade.</b> Apply at the upper band. If allotted, sell at the listing price less slippage (mainboard 0.5%, SME 2%), after STT, exchange, GST and DP charges. Short-term gains tax of 20.8% is netted per financial year. Cash is blocked from the bid day until the refund (two working days) or the sale proceeds (listing plus one day).</li>
+          <li><b>Allotment odds.</b> 1 &divide; retail subscription where known, otherwise total subscription. Application counts are not published, so true odds may be somewhat better.</li>
+          <li><b>Testing the calls.</b> Each IPO is scored using only history from before its bid date. GMP is the closing-day figure where available, otherwise the listing-eve figure, which is slightly optimistic. Final subscription is known only as bidding closes.</li>
+          <li><b>Samples.</b> A few hundred IPOs per segment from one market phase. Small groups are marked. This is descriptive analysis, not investment advice.</li>
+        </ul>
+        <details class="disclose surface pad" style="margin-top:22px"><summary>Adjust assumptions <svg class="i" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></summary>
+          <div class="form" id="form"></div>
+          <p style="margin:18px 0 0"><button class="btn" id="csvBtn" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>Download the full ledger (CSV)</button></p>
+        </details>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot"><div>Sources: InvestorGain GMP history and listing results, Chittorgarh fundamentals and subscription data. Rolling 13-month window, refreshed daily.</div><div><a href="./">Back to today's calls</a></div></footer>
+</main>
+
+<script src="backtest.js"></script>
+<script src="decide.js"></script>
+<script>
+"use strict";
+const B = window.Backtest, D = window.Decide;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const inr = (n) => n == null || isNaN(n) ? "—" : (n < 0 ? "−" : "") + "₹" + Math.abs(Math.round(n)).toLocaleString("en-IN");
+const lakh = (n) => n == null ? "—" : Math.abs(n) >= 1e5 ? (n < 0 ? "−" : "") + "₹" + (Math.abs(n) / 1e5).toFixed(2) + " L" : inr(n);
+const pc = (n, d = 1) => n == null || isNaN(n) ? "—" : (n > 0 ? "+" : n < 0 ? "−" : "") + Math.abs(n).toFixed(d) + "%";
+const pr = (x) => x == null ? "—" : Math.round(x * 100) + "%";
+const sg = (n) => n > 0 ? "pos" : n < 0 ? "neg" : "";
+const dn = (s) => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 864e5;
+const SEGN = { SME: "SME", Mainboard: "mainboard", All: "" };
+const LABEL = { APPLY: "Apply", LOTTERY: "Lottery bid", CONSIDER: "Consider", SKIP: "Skip" };
+
+const U = { ticketM: 15000, ticketS: 120000, accounts: 1, slipM: 0.5, slipS: 2, brokerage: 20, tax: 20.8, applyTax: true };
+try { Object.assign(U, JSON.parse(localStorage.getItem("ipo-bt-prefs2") || "{}")); } catch (e) {}
+let TAB = "SME", SEL = 0;
+try { const t = localStorage.getItem("ipo-bt-tab"); if (["SME", "Mainboard", "All"].includes(t)) TAB = t; } catch (e) {}
+let ARCH = [], INS = {}, ROWS = [], RECS = new Map(), RULES = [];
+
+const cfg = () => Object.assign({}, B.DEFAULTS, {
+  ticket: { Mainboard: +U.ticketM || 15000, SME: +U.ticketS || 120000 }, accounts: Math.max(1, +U.accounts || 1),
+  slippagePct: { Mainboard: +U.slipM || 0, SME: +U.slipS || 0 }, brokerage: +U.brokerage || 0, taxPct: +U.tax || 0, applyTax: !!U.applyTax, mcRuns: 2000, seed: 42 });
+const inTab = (seg) => TAB === "All" || seg === TAB;
+const tabRows = () => ROWS.filter((r) => inTab(r.segment) && r.gainPct != null);
+const weighted = (l) => { const w = l.reduce((s, r) => s + r.p, 0); return w ? l.reduce((s, r) => s + r.p * r.gainPct, 0) / w : null; };
+const dbar = (v, mx, col) => { const wd = v == null ? 0 : Math.min(50, Math.abs(v) / mx * 50); return `<div class="dbar"><i style="${v < 0 ? `right:50%;width:${wd}%;background:var(--bad)` : `left:50%;width:${wd}%;background:${col || "var(--good)"}`}"></i></div>`; };
+const who = () => TAB === "All" ? "" : SEGN[TAB] + " ";
+const lbl = (s) => String(s).replace(/^<= ?/, "≤ ").replace(/^> ?/, "Above ").replace(/^< ?/, "Below ").replace(/(\d)-(\d)/g, "$1–$2").replace(/\+$/, " and above");
+
+/* ---------- 1. calls ---------- */
+function validate() {
+  const c = Object.assign(cfg(), { mcRuns: 0 }), byId = new Map(ROWS.map((r) => [r.id, r])), out = [];
+  for (const v of Object.values(INS)) {
+    const r = byId.get(v.ig_id), rec = RECS.get(v.ig_id);
+    if (!r || r.gainPct == null || !inTab(r.segment)) continue;
+    const g = rec.gmp_close != null ? rec.gmp_close : rec.gmp_list;
+    if (g == null) continue;
+    const p = { name: r.name, segment: r.segment, price: r.price, gmp: g, lot: v.lot, st: "open", close: r.bid, trend: 0, issue_size_cr: v.issue_size_cr, subscription_x: v.sub && v.sub.total };
+    const d = D.decide(p, v, ROWS.filter((x) => x.listing < r.bid), c, r.bid);
+    const odds = v.sub && v.sub.retail ? Math.min(1, 1 / v.sub.retail) : r.p;
+    out.push({ verdict: d.verdict, gain: r.gainPct, odds, real: odds * r.netAllot, src: rec.gmp_close != null ? "close" : "eve" });
+  }
+  return out;
+}
+function agg(l) {
+  const n = l.length; if (!n) return null;
+  const w = l.reduce((s, o) => s + o.odds, 0);
+  return { n, avg: l.reduce((s, o) => s + o.gain, 0) / n, up: l.filter((o) => o.gain > 0).length / n, worst: Math.min(...l.map((o) => o.gain)),
+    get: w ? l.reduce((s, o) => s + o.odds * o.gain, 0) / w : null, real: l.reduce((s, o) => s + o.real, 0) };
+}
+function renderCalls() {
+  const all = validate();
+  const rows = ["APPLY", "LOTTERY", "CONSIDER", "SKIP"].map((v) => [v, agg(all.filter((o) => o.verdict === v))]).filter((x) => x[1]);
+  $("valTable").innerHTML = `<thead><tr><th>Call</th><th>IPOs</th><th>Listed higher</th><th>Average listing</th><th>What you'd get</th><th>Worst</th><th>Realistic profit</th></tr></thead><tbody>`
+    + rows.map(([v, a]) => `<tr><td><span class="tag t-${v}">${LABEL[v]}</span></td><td class="num">${a.n}</td><td class="num">${pr(a.up)}</td><td class="num ${sg(a.avg)}">${pc(a.avg)}</td>`
+      + `<td class="num ${sg(a.get)}">${pc(a.get)}</td><td class="num ${sg(a.worst)}">${pc(a.worst, 0)}</td><td class="num ${sg(a.real)}"><b>${inr(a.real)}</b></td></tr>`).join("") + "</tbody>";
+  const go = agg(all.filter((o) => o.verdict === "APPLY" || o.verdict === "LOTTERY")), skip = agg(all.filter((o) => o.verdict === "SKIP"));
+  const closeN = all.filter((o) => o.src === "close").length;
+  $("valAnswer").innerHTML = !all.length ? "There are not yet enough analysed IPOs in this segment."
+    : go && skip ? `<b>Yes.</b> Across ${all.length} recent ${who()}IPOs, scored as of their bid date, the calls to apply listed higher ${pr(go.up)} of the time, averaging ${pc(go.avg)}. The calls to skip listed higher only ${pr(skip.up)} of the time; bidding on them anyway would have ${skip.real < 0 ? "lost" : "made"} about <b>${inr(Math.abs(skip.real))}</b>.`
+      : skip ? `Every recent ${who()}IPO scored as a skip or a judgement call. The ${skip.n} skips listed higher only ${pr(skip.up)} of the time, which supports staying out.` : `${all.length} IPOs tested.`;
+  $("valNote").textContent = `Based on ${all.length} IPOs listed in roughly the last 35 days with full fundamentals: ${closeN} scored on closing-day GMP, ${all.length - closeN} on listing-eve GMP.`;
+  return { go, skip };
+}
+
+/* ---------- 2. rules ---------- */
+const PRESETS = {
+  SME: [["Apply to every IPO", {}], ["First GMP above zero", { minFirstGmpPct: 0.01 }], ["First GMP at least 10%", { minFirstGmpPct: 10 }], ["First GMP at least 20%", { minFirstGmpPct: 20 }],
+    ["Subscribed at least 3x", { minSub: 3 }], ["Subscribed at least 20x", { minSub: 20 }], ["Subscribed at least 100x", { minSub: 100 }]],
+  Mainboard: [["Apply to every IPO", {}], ["First GMP above zero", { minFirstGmpPct: 0.01 }], ["First GMP at least 10%", { minFirstGmpPct: 10 }], ["First GMP at least 20%", { minFirstGmpPct: 20 }],
+    ["Subscribed at least 5x", { minSub: 5 }], ["Subscribed at least 20x", { minSub: 20 }], ["Issue of ₹500 Cr or more", { minSize: 500 }]],
+  All: [["Apply to every IPO", {}], ["First GMP at least 10%", { minFirstGmpPct: 10 }], ["First GMP at least 20%", { minFirstGmpPct: 20 }], ["Subscribed at least 20x", { minSub: 20 }]],
+};
+function renderRules() {
+  const c = cfg();
+  RULES = PRESETS[TAB].map(([name, f]) => B.run(ROWS, Object.assign({ name, segment: TAB }, f), c)).filter((r) => !r.empty).sort((a, b) => b.net - a.net);
+  SEL = Math.min(SEL, RULES.length - 1);
+  $("rules").innerHTML = `<thead><tr><th>Rule</th><th>IPOs</th><th>You'd get</th><th>Fell 10%+</th><th>Net profit</th></tr></thead><tbody>`
+    + RULES.map((r, i) => `<tr class="click ${i === SEL ? "sel" : ""}" data-i="${i}" tabindex="0" aria-selected="${i === SEL}"><td>${esc(r.strat.name)}</td><td class="num ${r.n < 15 ? "thin" : ""}">${r.n}${r.n < 15 ? "*" : ""}</td>`
+      + `<td class="num ${sg(r.weightedGainPct)}">${pc(r.weightedGainPct)}</td><td class="num">${pr(r.deepLossRate)}</td><td class="num ${sg(r.net)}"><b>${inr(r.net)}</b></td></tr>`).join("") + "</tbody>";
+  const all = RULES.find((r) => r.strat.name === "Apply to every IPO"), best = RULES.find((r) => r.n >= 15) || RULES[0];
+  $("ruleAnswer").innerHTML = !best ? "Not enough data." : best === all ? `<b>No filter beat simply applying to every ${who()}IPO</b>, which netted ${inr(all.net)} across ${all.n} listings.`
+    : `<b>${esc(best.strat.name)}</b> worked best: across ${best.n} IPOs the shares you would have received gained ${pc(best.weightedGainPct)}, netting <b>${inr(best.net)}</b> against ${inr(all && all.net)} for applying to everything. The edge comes from skipping weak listings, the very ones you are most likely to be allotted.`;
+  renderRuleDetail();
+}
+function lineChart(pts) {
+  if (pts.length < 2) return '<div class="note">Not enough data.</div>';
+  const W = 520, H = 180, L = 60, R = 8, T = 10, Bm = 24;
+  const xs = pts.map((p) => dn(p[0])), ys = pts.map((p) => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs); let y0 = Math.min(0, ...ys), y1 = Math.max(0, ...ys); if (y1 === y0) y1 = y0 + 1;
+  const X = (x) => L + (x - x0) / Math.max(1, x1 - x0) * (W - L - R), Y = (y) => T + (1 - (y - y0) / (y1 - y0)) * (H - T - Bm);
+  const d = pts.map((p, i) => `${i ? "L" : "M"}${X(dn(p[0])).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join("");
+  const last = ys[ys.length - 1];
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative net profit, ending at ${inr(last)}">`
+    + [...new Set([y0, 0, y1])].map((t) => `<line x1="${L}" x2="${W - R}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}" stroke="var(--line)"/><text x="${L - 8}" y="${(Y(t) + 4).toFixed(1)}" text-anchor="end" font-size="10.5" fill="var(--ink-3)">${lakh(t)}</text>`).join("")
+    + `<path d="${d}" fill="none" stroke="${last >= 0 ? "var(--good)" : "var(--bad)"}" stroke-width="1.75"/>`
+    + `<text x="${L}" y="${H - 6}" font-size="10.5" fill="var(--ink-3)">${pts[0][0]}</text><text x="${W - R}" y="${H - 6}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${pts[pts.length - 1][0]}</text></svg>`;
+}
+function renderRuleDetail() {
+  const r = RULES[SEL];
+  if (!r) { $("ruleDetail").innerHTML = ""; return; }
+  $("ruleDetail").innerHTML = `<div class="rd-head"><div class="kicker">Track record</div><h3 style="font:500 20px var(--serif);margin:4px 0 2px">${esc(r.strat.name)}</h3>
+    <p class="note" style="margin:0 0 6px">Cumulative realistic net profit, by listing date</p></div><div>${lineChart(r.equity)}</div>
+    <div class="mini num"><div><div class="l">Allotments expected</div><div class="v">${r.expAllotments.toFixed(1)}</div><div class="h">from ${r.applications} bids</div></div>
+      <div><div class="l">Cash blocked per bid</div><div class="v">${r.avgBlockedDays.toFixed(1)} days</div><div class="h">peak ${lakh(r.peakCapital)}</div></div>
+      <div><div class="l">Chance of a net loss</div><div class="v ${r.mc && r.mc.pLoss > 0.4 ? "neg" : ""}">${r.mc ? pr(r.mc.pLoss) : "—"}</div><div class="h">over 13 months</div></div>
+      <div><div class="l">Luck range, P10 to P90</div><div class="v" style="font-size:16px">${r.mc ? lakh(r.mc.p10) + " to " + lakh(r.mc.p90) : "—"}</div><div class="h">from 2,000 simulated lotteries</div></div></div>`;
+}
+
+/* ---------- 3. drivers ---------- */
+function renderDrivers() {
+  const tr = tabRows();
+  const F = [["Final subscription", "sub"], ["GMP before listing", "gmp"], ["Issue size", "size"], ["InvestorGain rating", "rating"]].map(([name, k]) => {
+    const b = B.BUCKETS[k].map(([label, fn]) => { const l = tr.filter((r) => { try { return fn(r) === true; } catch (e) { return false; } }); return Object.assign({ label, get: weighted(l) }, B.stats(l)); });
+    const ok = b.filter((x) => x.n >= 8), hi = ok.reduce((m, x) => !m || x.avgGain > m.avgGain ? x : m, null), lo = ok.reduce((m, x) => !m || x.avgGain < m.avgGain ? x : m, null);
+    return { name, b: b.filter((x) => x.n > 0), hi, lo, spread: hi && lo ? hi.avgGain - lo.avgGain : 0, cover: b.reduce((s, x) => s + x.n, 0) };
+  }).filter((f) => f.cover >= 40 && f.b.length >= 2).sort((a, b) => b.spread - a.spread);
+  const [top, sec] = F;
+  $("drvAnswer").innerHTML = top && top.hi ? `<b>${top.name}</b> separates outcomes most: IPOs in the ${esc(lbl(top.hi.label))} group averaged ${pc(top.hi.avgGain)}, against ${pc(top.lo.avgGain)} for ${esc(lbl(top.lo.label))}.${sec && sec.hi ? ` ${sec.name} comes next.` : ""} The strongest groups carry the worst allotment odds, so read the right-hand figure: what you would actually receive.` : "Not enough data.";
+  const mx = Math.max(10, ...F.flatMap((f) => f.b.map((x) => Math.abs(x.avgGain || 0))));
+  $("drivers").innerHTML = F.map((f) => `<div class="surface pad"><div class="drv-title"><h3>${f.name}</h3><span class="muted" style="font-size:12.5px">${f.spread.toFixed(0)}-point spread</span></div>`
+    + f.b.map((x) => `<div class="brow ${x.n < 8 ? "thin" : ""}"><span>${esc(lbl(x.label))}<br><span class="muted" style="font-size:12px">${x.n} IPOs · ${pr(x.posRate)} up</span></span>${dbar(x.avgGain, mx)}`
+      + `<span class="r num"><b class="${sg(x.avgGain)}">${pc(x.avgGain)}</b><small>you'd get ${pc(x.get)}</small></span></div>`).join("") + `</div>`).join("");
+}
+
+/* ---------- 4. GMP ---------- */
+function renderGmp() {
+  const tr = tabRows().filter((r) => r.gmpList != null), gp = (r) => r.gmpList / r.price * 100;
+  const b = [["Zero or less", (g) => g <= 0.0001], ["0 to 10%", (g) => g > 0.0001 && g < 10], ["10 to 25%", (g) => g >= 10 && g < 25], ["25 to 50%", (g) => g >= 25 && g < 50], ["Above 50%", (g) => g >= 50]].map(([label, fn]) => {
+    const l = tr.filter((r) => fn(gp(r))), n = l.length;
+    return n ? { label, n, a: l.reduce((s, r) => s + r.gainPct, 0) / n, up: l.filter((r) => r.gainPct > 0).length / n, get: weighted(l), odds: l.reduce((s, r) => s + r.p, 0) / n } : { label, n };
+  });
+  $("gmpTable").innerHTML = `<thead><tr><th>GMP said</th><th>IPOs</th><th>Listed</th><th>Higher</th><th>Odds</th><th>You'd get</th></tr></thead><tbody>`
+    + b.filter((x) => x.n).map((x) => `<tr><td>${x.label}</td><td class="num">${x.n}</td><td class="num ${sg(x.a)}">${pc(x.a)}</td><td class="num">${pr(x.up)}</td><td class="num">1 in ${Math.max(1, Math.round(1 / x.odds))}</td><td class="num ${sg(x.get)}"><b>${pc(x.get)}</b></td></tr>`).join("") + "</tbody>";
+  const cal = B.calibration(tabRows(), "list"), lo = b[0], hi = b.filter((x) => x.n && (x.label === "25 to 50%" || x.label === "Above 50%"));
+  const hiUp = hi.length ? hi.reduce((s, x) => s + x.up * x.n, 0) / hi.reduce((s, x) => s + x.n, 0) : null;
+  $("gmpAnswer").innerHTML = cal.n >= 3 ? `<b>For direction, yes; for size, loosely.</b> When GMP was 25% or more, ${pr(hiUp)} of IPOs listed higher; at zero or below, only ${pr(lo.up)} did. But the typical miss on the size of the gain was ${cal.mae.toFixed(0)} points. Use GMP to decide <i>whether</i> to apply, not to predict <i>how much</i>.` : "Not enough data.";
+  const m = B.monthly(tabRows()).slice(-13), mx = Math.max(10, ...m.map((x) => Math.abs(x.avgGain || 0)));
+  $("regime").innerHTML = m.map((x) => `<div class="brow" style="grid-template-columns:72px 1fr 120px"><span class="num">${new Date(x.label + "-01T00:00:00Z").toLocaleDateString("en-IN", { month: "short", year: "2-digit", timeZone: "UTC" })}</span>${dbar(x.avgGain, mx, "var(--gold)")}<span class="r num">${pc(x.avgGain, 0)}<small>${pr(x.posRate)} up · ${x.n} IPOs</small></span></div>`).join("");
+}
+
+/* ---------- verdict ---------- */
+function renderVerdict(val) {
+  const c = Object.assign(cfg(), { mcRuns: 0 }), r = B.run(ROWS, { segment: TAB }, c), st = B.stats(tabRows()), cal = B.calibration(tabRows(), "list");
+  const d = tabRows().map((x) => x.listing).sort();
+  $("vEyebrow").textContent = `Backtest · ${TAB === "All" ? "all IPOs" : TAB === "SME" ? "SME IPOs" : "mainboard IPOs"} · ${d.length ? new Date(d[0] + "T00:00:00Z").toLocaleDateString("en-IN", { month: "short", year: "numeric", timeZone: "UTC" }) + " to " + new Date(d[d.length - 1] + "T00:00:00Z").toLocaleDateString("en-IN", { month: "short", year: "numeric", timeZone: "UTC" }) : ""}`;
+  $("vHead").textContent = r.net < 0 ? `Applying to every ${who()}IPO lost money once allotment odds are counted.` : `Applying to every ${who()}IPO made ${inr(r.net)}: a thin return for the cash it ties up.`;
+  $("vLede").innerHTML = `The average ${who()}IPO listed ${pc(st.avgGain)}, but the shares you would actually have received gained only <b>${pc(r.weightedGainPct)}</b>, because you are mostly allotted in the weak issues.${val.go && val.skip ? ` Being selective is what works: the Desk's skip calls listed higher ${pr(val.skip.up)} of the time, its apply calls ${pr(val.go.up)}.` : ""}`;
+  const fig = (l, v, h, cl) => `<div><div class="l">${l}</div><div class="v num ${cl || ""}">${v}</div><div class="h">${h}</div></div>`;
+  $("vFigs").innerHTML = fig("Net result, applying to all", inr(r.net), `${r.n} IPOs, after charges and tax`, sg(r.net))
+    + fig("Average allotment odds", "1 in " + Math.max(1, Math.round(1 / Math.max(r.allotRate, 1e-9))), "far worse for hot issues")
+    + fig("Listed 10% or more below issue", pr(r.deepLossRate), "share of all listings")
+    + fig("Typical GMP miss", cal.mae ? "±" + cal.mae.toFixed(0) + " pts" : "—", cal.corr ? `correlation ${cal.corr.toFixed(2)}` : "");
+}
+
+function renderTabs() {
+  const n = (s) => ROWS.filter((r) => (s === "All" || r.segment === s) && r.gainPct != null).length;
+  $("tabs").innerHTML = ["SME", "Mainboard", "All"].map((s) => `<button type="button" data-tab="${s}" aria-pressed="${TAB === s}">${s === "All" ? "Both" : s}<span class="c">${n(s)}</span></button>`).join("");
+}
+function renderForm() {
+  const F = [["ticketM", "Mainboard application, ₹"], ["ticketS", "SME application, ₹"], ["accounts", "Accounts applying"], ["slipM", "Mainboard slippage, %"], ["slipS", "SME slippage, %"], ["brokerage", "Brokerage per sale, ₹"], ["tax", "Tax rate, %"]];
+  $("form").innerHTML = F.map(([k, l]) => `<label>${l}<input data-k="${k}" type="number" step="any" value="${esc(U[k])}"></label>`).join("")
+    + `<label class="chk"><input data-c="applyTax" type="checkbox" ${U.applyTax ? "checked" : ""}> Apply tax</label>`;
+}
+function renderResearch() {
+  const byId = new Map(ROWS.map((r) => [r.id, r])), cuts = D.gradeCuts(Object.values(INS));
+  const norm = (s) => s.toLowerCase().replace(/ (ltd|limited)\.?$/, "").replace(/[^a-z0-9]/g, "");
+  const ltp = {};
+  for (const v of Object.values(INS)) for (const x of v.precedents || []) if (x.ltp && x.listing_close) ltp[norm(x.name)] = x;
+  const rows = [];
+  for (const v of Object.values(INS)) {
+    const r = byId.get(v.ig_id);
+    if (!r || r.gainPct == null || !inTab(r.segment)) continue;
+    const R = D.research({ segment: r.segment }, v, cuts);
+    if (!R.grade) continue;
+    const L = ltp[norm(v.name)];
+    rows.push({ grade: R.grade, call: R.longTerm.call, gain: r.gainPct, after: L ? (L.ltp / L.listing_close - 1) * 100 : null });
+  }
+  const grp = [["Grade 4–5", (x) => x.grade >= 4], ["Grade 3", (x) => x.grade === 3], ["Grade 1–2", (x) => x.grade <= 2], ["View: Positive", (x) => x.call === "Positive"], ["View: Neutral", (x) => x.call === "Neutral"], ["View: Cautious", (x) => x.call === "Cautious"]]
+    .map(([label, fn]) => { const l = rows.filter(fn), a = l.filter((x) => x.after != null), avg = (arr, f) => arr.length ? arr.reduce((s, x) => s + f(x), 0) / arr.length : null;
+      return { label, n: l.length, up: l.length ? l.filter((x) => x.gain > 0).length / l.length : null, avg: avg(l, (x) => x.gain), na: a.length, after: avg(a, (x) => x.after), afterUp: a.length ? a.filter((x) => x.after > 0).length / a.length : null }; });
+  $("resTable").innerHTML = `<thead><tr><th>Group</th><th>IPOs</th><th>Listed higher</th><th>Average listing</th><th>Tracked after listing</th><th>Move since listing</th><th>Still above listing</th></tr></thead><tbody>`
+    + grp.filter((g) => g.n).map((g) => `<tr><td>${g.label}</td><td class="num">${g.n}</td><td class="num">${pr(g.up)}</td><td class="num ${sg(g.avg)}">${pc(g.avg)}</td><td class="num">${g.na}</td><td class="num ${sg(g.after)}">${g.na ? pc(g.after) : "—"}</td><td class="num">${g.na ? pr(g.afterUp) : "—"}</td></tr>`).join("") + "</tbody>";
+  const hi = grp[0], lo = grp[2];
+  const d = hi.up != null && lo.up != null ? hi.up - lo.up : null;
+  const after = grp.slice(0, 3).filter((g) => g.na >= 3), allDown = after.length && after.every((g) => g.after < 0);
+  const lead = d == null ? "" : d >= 0.15 ? "<b>Yes, clearly at listing.</b>" : d >= 0.05 ? "<b>Modestly, at listing.</b>" : "<b>Not in this segment.</b>";
+  $("resAnswer").innerHTML = !rows.length || d == null ? (rows.length ? `${rows.length} graded IPOs so far; see the table.` : "There are not yet enough analysed IPOs in this segment.")
+    : `${lead} Across ${rows.length} recent ${who()}IPOs, grade 4–5 issues listed higher ${pr(hi.up)} of the time (avg ${pc(hi.avg)}) against ${pr(lo.up)} (avg ${pc(lo.avg)}) for grade 1–2.`
+      + (d < 0.05 && TAB === "SME" ? " SME financials are small, recent and often flattered before listing, so fundamentals carry less signal here; lean on GMP and demand instead." : "")
+      + ` After listing, ${allDown ? "every group drifted lower in the first weeks" : "the picture is mixed"} and the samples are too small to separate them. That matches CRISIL's own caveat: a fundamental grade is not a price call. Use it to decide what to <i>keep</i> after listing.`;
+}
+function renderAll() {
+  ROWS = B.ledger(ARCH, cfg());
+  renderTabs();
+  const val = renderCalls();
+  renderVerdict(val); renderRules(); renderDrivers(); renderGmp(); renderResearch();
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-tab]");
+  if (t) { TAB = t.dataset.tab; SEL = 0; try { localStorage.setItem("ipo-bt-tab", TAB); } catch (err) {} renderAll(); return; }
+  const r = e.target.closest("tr[data-i]");
+  if (r) selectRule(r);
+});
+document.addEventListener("keydown", (e) => { const r = e.target.closest && e.target.closest("tr[data-i]"); if (r && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); selectRule(r); } });
+function selectRule(r) { SEL = +r.dataset.i; document.querySelectorAll("#rules tr[data-i]").forEach((x) => { x.classList.toggle("sel", x === r); x.setAttribute("aria-selected", x === r); }); renderRuleDetail(); }
+document.addEventListener("input", (e) => {
+  const el = e.target;
+  if (el.dataset.k) U[el.dataset.k] = el.value; else if (el.dataset.c) U[el.dataset.c] = el.checked; else return;
+  try { localStorage.setItem("ipo-bt-prefs2", JSON.stringify(U)); } catch (err) {}
+  renderAll();
+});
+$("csvBtn").addEventListener("click", () => {
+  const blob = new Blob([B.csv(tabRows())], { type: "text/csv" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "ipo-backtest-" + TAB.toLowerCase() + ".csv"; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+});
+const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) document.querySelectorAll("[data-toc]").forEach((a) => a.classList.toggle("on", a.dataset.toc === en.target.id)); }), { rootMargin: "-30% 0px -60% 0px" });
+["q1", "q2", "q3", "q4", "q5", "method"].forEach((id) => io.observe($(id)));
+
+renderForm();
+const bust = "?t=" + Math.floor(Date.now() / 6e5);
+Promise.all([fetch("archive.json" + bust).then((r) => r.json()), fetch("insights.json" + bust).then((r) => r.json()).catch(() => ({ ipos: {} }))])
+  .then(([a, i]) => { ARCH = a.records || []; RECS = new Map(ARCH.map((r) => [r.id, r])); INS = i.ipos || {}; renderAll(); })
+  .catch((e) => { $("vHead").textContent = "The data could not be loaded."; $("vLede").textContent = String(e); });
+</script>
+</body>
+</html>

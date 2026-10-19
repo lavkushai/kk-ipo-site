@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPO Desk · Today</title>
+<meta name="description" content="Apply or skip calls for Indian mainboard and SME IPOs, with realistic allotment odds, valuation against precedents, and a 30-day track record of GMP against actual listings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ui.css">
+<style>
+/* page-specific: ranked call list */
+.row,.row-h{display:grid;grid-template-columns:150px minmax(0,1fr) 112px 104px 124px 110px 20px;gap:20px;align-items:center}
+.row-h{padding:10px 0;font-size:12px;font-weight:500;color:var(--ink-3);border-bottom:1px solid var(--line)}
+.row-h span:nth-child(n+3){text-align:right}
+.row{padding:18px 6px 18px 0;border:0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s var(--ease);width:100%;background:none;text-align:left}
+.row:hover{background:var(--surface-2)}
+.row .v{text-align:right}
+.row .v b{display:block;font-weight:600;font-size:15px}
+.row .v small{display:block;color:var(--ink-3);font-size:12px;margin-top:2px}
+.row .name{font:500 18px/1.25 var(--serif);letter-spacing:-.005em}
+.row .meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:5px;font-size:12.5px;color:var(--ink-2)}
+.row .meta .hot{color:var(--bad);font-weight:600}
+.row .score{font-size:12px;color:var(--ink-3);margin-top:6px}
+.row .chev{color:var(--ink-3)}
+.row.dim .name,.row.dim .v b{color:var(--ink-2)}
+@media (max-width:900px){
+  .row-h{display:none}
+  .row{grid-template-columns:1fr 1fr;gap:10px 16px;padding:16px 0}
+  .row>:nth-child(1),.row>:nth-child(2){grid-column:1/-1}
+  .row .v{text-align:left}
+  .row .chev{display:none}
+}
+.group-label{font-size:12px;font-weight:500;color:var(--ink-3);padding:26px 0 6px}
+.dmeta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12.5px;color:var(--ink-2)}
+
+/* drawer content */
+.d-figs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--r);margin:18px 0}
+.d-figs>div{padding:14px 16px}
+.d-figs>div:nth-child(odd){border-right:1px solid var(--line)}
+.d-figs>div:nth-child(n+3){border-top:1px solid var(--line)}
+.d-figs .l{font-size:12px;color:var(--ink-3)}
+.d-figs .v{font:500 22px/1.2 var(--serif);margin-top:2px}
+.d-figs .h{font-size:12px;color:var(--ink-2)}
+.d-sec{margin-top:26px}
+.d-sec h4{font-size:12px;font-weight:600;color:var(--ink-3);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase}
+.rec{font:400 17px/1.55 var(--serif);color:var(--ink);margin:4px 0 0}
+.range{position:relative;height:40px;margin:4px 8px 0}
+.range .track{position:absolute;left:0;right:0;top:19px;height:2px;background:var(--line)}
+.range .span{position:absolute;top:18px;height:4px;border-radius:2px;background:var(--gold)}
+.range .zero{position:absolute;top:10px;width:1px;height:22px;background:var(--ink-3)}
+.range .pt{position:absolute;top:12px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--surface);border:2px solid var(--ink)}
+.range .pt.base{background:var(--ink)}
+.range-l{display:grid;grid-template-columns:repeat(3,1fr);font-size:12.5px;margin-top:4px;color:var(--ink-3)}
+.range-l div:nth-child(2){text-align:center}.range-l div:nth-child(3){text-align:right}
+.range-l b{display:block;font-size:15px;color:var(--ink)}
+.range-l b.pos{color:var(--good)}.range-l b.neg{color:var(--bad)}
+.why{list-style:none;padding:0;margin:0;display:grid;gap:10px;font-size:14px}
+.why li{display:grid;grid-template-columns:20px 1fr;gap:8px}
+.why .p{color:var(--good)}.why .m{color:var(--bad)}
+.fac{display:grid;grid-template-columns:120px 1fr 34px;gap:4px 12px;align-items:center;font-size:13px;padding:9px 0;border-bottom:1px solid var(--line)}
+.fac:last-child{border-bottom:0}
+.fac .note{grid-column:2/-1;color:var(--ink-3);font-size:12px}
+.fac .w{color:var(--ink-3);font-size:12px;text-align:right}
+.rgrade{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px}
+.rgrade .gnum{font:500 40px/1 var(--serif)}.rgrade .gnum span{font-size:18px;color:var(--ink-3)}
+.rgrade .glabel{font:500 16px var(--serif)}
+.rgrade .lt{text-align:right;max-width:200px}.rgrade .lt b{font:600 16px var(--sans);display:block}
+.rgrade .lt.pos b{color:var(--good)}.rgrade .lt.neg b{color:var(--bad)}
+@media (max-width:520px){.rgrade{grid-template-columns:auto 1fr}.rgrade .lt{grid-column:1/-1;text-align:left;max-width:none}}
+.vbox{margin-top:12px;padding:12px 14px;background:var(--surface-2);border-radius:var(--r-sm)}
+.vlabel{font-size:14px}.vlabel b{font-weight:600}
+.mults{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;margin-top:10px}
+.mults div{display:flex;flex-direction:column;font-size:12px}.mults b{font:500 18px var(--serif);color:var(--ink)}.mults small{color:var(--ink-3)}
+.d-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;padding-top:18px;border-top:1px solid var(--line)}
+
+/* record section */
+.compare{display:grid;gap:18px}
+.compare .seg-row{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:16px;align-items:end;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.compare .l{font-size:12px;color:var(--ink-3)}
+.compare .v{font:500 26px/1.15 var(--serif)}
+.compare .sname{font:500 16px var(--serif)}
+details.more>summary{list-style:none;cursor:pointer;display:inline-flex}
+details.more>summary::-webkit-details-marker{display:none}
+details.more[open]>summary .lbl-open{display:none}
+details.more:not([open])>summary .lbl-close{display:none}
+.spark{display:block}
+.empty{padding:40px 0;text-align:center;color:var(--ink-3)}
+.banner{border:1px solid var(--line);border-left:2px solid var(--warn);background:var(--surface);padding:10px 14px;border-radius:var(--r-sm);font-size:13.5px;color:var(--ink-2);margin-bottom:18px}
+</style>
+</head>
+<body>
+<header class="appbar"><div class="in">
+  <a class="brand" href="./" aria-label="IPO Desk home"><span class="mark" aria-hidden="true">IP</span><b>IPO Desk</b></a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#today" data-nav="today" class="on">Today</a>
+    <a href="#calls" data-nav="calls">Live calls</a>
+    <a href="#record" data-nav="record">Track record</a>
+    <a href="backtest.html">Backtest</a><a href="guide.html">Guide</a>
+  </nav>
+  <div class="bar-end">
+    <div class="status" title="Data freshness"><span class="dot" id="liveDot"></span><span class="t" id="liveTxt">Loading</span></div>
+    <button class="plan-pill" id="planBtn" type="button" aria-label="Open my plan"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>Plan <b id="planN">0</b></button>
+    <button class="plan-pill" id="refreshBtn" type="button" title="Fetch the latest GMP and subscription now"><svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>Refresh</button>
+  </div>
+</div></header>
+
+<main class="page">
+  <div id="banner"></div>
+
+  <section id="today" aria-labelledby="headline">
+    <div class="eyebrow" id="dateline">&nbsp;</div>
+    <h1 class="display" id="headline">Reading today's book&hellip;</h1>
+    <p class="lede" id="lede"></p>
+    <div class="figures" id="figures"></div>
+  </section>
+
+  <section class="section" id="calls" aria-labelledby="callsH">
+    <div class="section-head">
+      <div><div class="kicker">Live calls</div><h2 class="sec" id="callsH">Ranked from apply to skip</h2>
+        <p>Each IPO is scored on six factors: GMP, how similar IPOs actually listed, institutional demand, valuation against recent sector IPOs, fundamentals and offer structure. Open one for the full analysis.</p></div>
+      <div class="seg" id="seg" role="group" aria-label="Segment"></div>
+    </div>
+    <div class="row-h" aria-hidden="true"><span>Call</span><span>IPO</span><span>GMP</span><span>Allotment odds</span><span>Expected / bid</span><span>Base case</span><span></span></div>
+    <div id="list"></div>
+  </section>
+
+  <section class="section" id="record" aria-labelledby="recordH">
+    <div class="section-head">
+      <div><div class="kicker">Track record · last 30 days</div><h2 class="sec" id="recordH">What GMP promised, and what you'd actually have made</h2></div>
+      <span class="muted" id="recordN" style="font-size:13px"></span>
+    </div>
+    <p class="answer" id="recordAnswer"></p>
+    <div class="grid-2">
+      <div class="surface pad"><h3 class="sub">GMP the evening before listing, against the actual listing gain</h3><p class="note" style="margin:4px 0 14px">Points below the dashed line listed worse than GMP suggested.</p><div id="scatter"></div></div>
+      <div class="surface pad"><h3 class="sub">If you had applied to every listing</h3><p class="note" style="margin:4px 0 18px">One application each, sold at the listing price, after charges.</p><div class="compare" id="compare"></div></div>
+    </div>
+    <details class="more" style="margin-top:22px">
+      <summary class="btn"><span class="lbl-open" id="allLbl">Show every listing</span><span class="lbl-close">Hide listings</span></summary>
+      <div class="scroll-x" style="margin-top:14px"><table class="tbl" id="real"></table></div>
+    </details>
+  </section>
+
+  <footer class="foot">
+    <div>GMP is an unofficial, off-exchange indicator and can vanish before listing. Calls are mechanical summaries of public data with stated weights; they are not investment advice. Allotment odds are 1 &divide; retail subscription, because application counts are not published. Verify with the red herring prospectus and exchange data before applying.</div>
+    <div>Sources: <a href="https://www.investorgain.com/report/ipo-gmp-live/331/" target="_blank" rel="noopener">InvestorGain</a>, <a href="https://www.chittorgarh.com/" target="_blank" rel="noopener">Chittorgarh</a>, <a href="https://ipowatch.in/ipo-grey-market-premium-latest-ipo-gmp/" target="_blank" rel="noopener">IPO Watch</a>.<br><span id="srcLine"></span></div>
+  </footer>
+</main>
+
+<div id="layer">
+  <div class="scrim" data-close></div>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle" tabindex="-1">
+    <div class="drawer-head"><div style="flex:1;min-width:0" id="dHead"></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close panel"><svg class="i" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="drawer-body" id="dBody"></div>
+  </aside>
+</div>
+
+<script src="backtest.js"></script>
+<script src="decide.js"></script>
+<script>
+"use strict";
+const B = window.Backtest, D = window.Decide;
+const IST = "Asia/Kolkata", SNAP_EVERY = 5 * 60e3, LIVE_EVERY = 3 * 60e3, STALE_HOURS = 36;
+const S = { snap: null, snapIpos: [], hist: {}, archive: [], recById: new Map(), rows: [], ins: {}, insByIg: new Map(), ipos: [], seg: "All",
+  live: { ok: null, at: null, map: null }, plan: new Set(), open: null };
+try { S.seg = localStorage.getItem("ipo-seg") || "All"; S.plan = new Set(JSON.parse(localStorage.getItem("ipo-plan") || "[]")); } catch (e) {}
+const save = () => { try { localStorage.setItem("ipo-seg", S.seg); localStorage.setItem("ipo-plan", JSON.stringify([...S.plan])); } catch (e) {} };
+
+/* ---------- formatting ---------- */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const todayIST = () => new Intl.DateTimeFormat("en-CA", { timeZone: IST }).format(new Date());
+const dnum = (iso) => Math.floor(Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) / 864e5);
+const dd = (iso) => iso ? new Date(iso + "T00:00:00Z").toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "UTC" }) : null;
+const inr = (n) => n == null || isNaN(n) ? "—" : (n < 0 ? "−" : "") + "₹" + Math.abs(Number(n)).toLocaleString("en-IN", { maximumFractionDigits: Math.abs(n) < 100 && n % 1 ? 2 : 0 });
+const lakh = (n) => n == null ? "—" : Math.abs(n) >= 1e5 ? (n < 0 ? "−" : "") + "₹" + (Math.abs(n) / 1e5).toFixed(2) + " L" : inr(n);
+const pc = (n, d = 0) => n == null || isNaN(n) ? "—" : (n > 0 ? "+" : n < 0 ? "−" : "") + Math.abs(n).toFixed(d) + "%";
+const pr = (x) => x == null ? "—" : Math.round(x * 100) + "%";
+const sg = (n) => n > 0 ? "pos" : n < 0 ? "neg" : "";
+const words = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+const w = (n) => n < 10 ? words[n] : String(n);
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const ago = (ms) => { const m = Math.max(0, Math.round(ms / 60e3)); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 2880 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " d ago"; };
+const plain = (h) => new DOMParser().parseFromString(h || "", "text/html").body.textContent.replace(/\s+/g, " ").trim();
+const num = (s) => { const m = String(s ?? "").match(/-?\d[\d,]*\.?\d*/); return m ? parseFloat(m[0].replace(/,/g, "")) : null; };
+const safeUrl = (u) => { if (!u) return null; if (u.startsWith("/")) u = "https://ipowatch.in" + u; return /^https:\/\/(www\.)?(chittorgarh\.com|investorgain\.com|ipowatch\.in)\//.test(u) ? u : null; };
+const rel = (iso, t) => { const d = dnum(iso) - dnum(t); return d === 0 ? "today" : d === 1 ? "tomorrow" : d > 1 ? "in " + d + " days" : -d + " days ago"; };
+const ICON = {
+  plus: '<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  minus: '<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>',
+  chev: '<svg class="i" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>',
+  ext: '<svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
+  check: '<svg class="i" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>',
+};
+const inSeg = (seg) => S.seg === "All" || seg === S.seg;
+const ORDER = { APPLY: 0, LOTTERY: 1, CONSIDER: 2, WAIT: 3, SKIP: 4, CLOSED: 5 };
+const LABEL = { APPLY: "Apply", LOTTERY: "Lottery bid", CONSIDER: "Consider", SKIP: "Skip", WAIT: "Await GMP", CLOSED: "Closed" };
+
+function cfg() {
+  let u = {}; try { u = JSON.parse(localStorage.getItem("ipo-bt-prefs2") || "{}"); } catch (e) {}
+  return Object.assign({}, B.DEFAULTS, { ticket: { Mainboard: +u.ticketM || 15000, SME: +u.ticketS || 120000 }, accounts: Math.max(1, +u.accounts || 1),
+    slippagePct: { Mainboard: +u.slipM || 0.5, SME: +u.slipS || 2 }, brokerage: +u.brokerage || 20, applyTax: false, mcRuns: 0 });
+}
+function statusOf(p, t) {
+  if (p.listing_price != null) return "listed";
+  if (p.listing && t >= p.listing) return "listed";
+  if (p.open && t < p.open) return "upcoming";
+  if (p.close && t <= p.close) return p.open ? "open" : "upcoming";
+  if (p.close && t > p.close) return "closed";
+  return p.status || "upcoming";
+}
+function trendOf(p) {
+  const pts = S.hist[p.id];
+  if (!pts || pts.length < 2 || p.gmp == null) return 0;
+  const prev = pts.slice().reverse().find((x) => x[1] !== p.gmp);
+  return prev ? p.gmp - prev[1] : 0;
+}
+
+/* ---------- data ---------- */
+async function loadSnapshot() {
+  const bust = "?t=" + Date.now();
+  const [a, b] = await Promise.allSettled([
+    fetch("ipo.json" + bust, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }),
+    fetch("history.json" + bust, { cache: "no-store" }).then((r) => r.ok ? r.json() : {}),
+  ]);
+  if (a.status === "fulfilled") { S.snap = a.value; S.snapIpos = a.value.ipos || []; } else if (!S.snap) S.snap = { error: String(a.reason) };
+  if (b.status === "fulfilled") S.hist = b.value;
+}
+async function loadStatic() {
+  const bust = "?t=" + Math.floor(Date.now() / 6e5);
+  const [a, i] = await Promise.allSettled([fetch("archive.json" + bust).then((r) => r.json()), fetch("insights.json" + bust).then((r) => r.json())]);
+  if (a.status === "fulfilled") { S.archive = a.value.records || []; S.recById = new Map(S.archive.map((r) => [r.id, r])); S.rows = B.ledger(S.archive, cfg()); }
+  if (i.status === "fulfilled") { S.ins = i.value.ipos || {}; S.insByIg = new Map(Object.values(S.ins).filter((v) => v.ig_id).map((v) => [v.ig_id, v])); S.cuts = D.gradeCuts(Object.values(S.ins)); }
+}
+async function loadLive() {
+  const [y, m] = todayIST().split("-").map(Number);
+  const fy = m >= 4 ? `${y}-${String(y + 1).slice(2)}` : `${y - 1}-${String(y).slice(2)}`;
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 15000);
+    const r = await fetch(`https://webnodejs.investorgain.com/cloud/v2/report/data-read/331/1/${m}/${y}/${fy}/0/all?search=&v=1`, { cache: "no-store", signal: ctl.signal });
+    clearTimeout(to);
+    const j = await r.json();
+    if (j.msg !== 1) throw new Error("bad response");
+    const map = new Map();
+    for (const row of j.reportTableData) {
+      const g = plain(row.GMP), rng = g.match(/(-?[\d.]+)\s*↓\s*\/\s*(-?[\d.]+)\s*↑/), mg = g.match(/₹\s*(-?[\d,.]+)/);
+      const lst = plain(row.Name).match(/L@\s*([\d.]+)\s*\(\s*([-+]?[\d.]+)\s*%/);
+      map.set(row["~id"], { ig_id: row["~id"], name: row["~ipo_name"], segment: row["~ipo_category1"] === "SME" ? "SME" : "Mainboard",
+        gmp: mg ? num(mg[1]) : 0, gmp_pct: num(row["~gmp_percent_calc"]), gmp_low: rng ? +rng[1] : null, gmp_high: rng ? +rng[2] : null,
+        subscription_x: num(row.Sub), price: num(row["Price (₹)"]), lot: num(row.Lot), issue_size_cr: num(row["IPO Size"]),
+        open: row["~Srt_Open"], close: row["~Srt_Close"], listing: row["~Str_Listing"], listing_price: lst ? +lst[1] : null, listing_gain_pct: lst ? +lst[2] : null });
+    }
+    S.live.map = map; S.live.ok = true; S.live.at = Date.now();
+  } catch (e) { S.live.ok = false; }
+}
+function compose() {
+  const t = todayIST(), out = S.snapIpos.map((p) => ({ ...p }));
+  if (S.live.ok && S.live.map) {
+    const byId = new Map(out.filter((p) => p.ig_id).map((p) => [p.ig_id, p]));
+    for (const [id, L] of S.live.map) {
+      const p = byId.get(id);
+      if (p) for (const k of ["gmp", "gmp_pct", "gmp_low", "gmp_high", "subscription_x", "listing_price", "listing_gain_pct"]) { if (L[k] != null) p[k] = L[k]; }
+      else if (!(L.listing && dnum(t) - dnum(L.listing) > 14)) out.push({ ...L, id: "ig" + id });
+    }
+  }
+  const c = cfg();
+  S.ipos = out.map((p) => {
+    p.st = statusOf(p, t); p.trend = trendOf(p);
+    p.pctv = p.price && p.gmp != null ? p.gmp / p.price * 100 : p.gmp_pct;
+    p.ins = (p.ig_id && S.insByIg.get(p.ig_id)) || (p.ch_id && S.ins[String(p.ch_id)]) || null;
+    if (p.st !== "listed") { p.call = D.decide(p, p.ins, S.rows, c, t); p.research = D.research(p, p.ins, S.cuts); }
+    return p;
+  });
+}
+
+/* ---------- derived ---------- */
+const live = () => S.ipos.filter((p) => inSeg(p.segment) && (p.st === "open" || p.st === "upcoming"));
+function band(p) {
+  const ins = p.ins || {}, lo = ins.price_low || p.price_low, hi = ins.price_high || p.price_high || p.price;
+  return lo && hi && lo !== hi ? inr(lo) + "–" + inr(hi).slice(1) : hi ? inr(hi) : null;
+}
+function when(p, t) {
+  if (p.st === "open") return p.close === t ? "Closes today, 5 PM" : "Closes " + dd(p.close) + " (" + rel(p.close, t) + ")";
+  if (p.st === "upcoming") return p.open ? "Opens " + dd(p.open) + " (" + rel(p.open, t) + ")" : "Dates to be announced";
+  if (p.st === "closed") return p.listing ? "Lists " + dd(p.listing) : "Awaiting listing";
+  return "";
+}
+const oddsText = (o) => o.p >= 0.995 ? "Near certain" : "1 in " + o.oneIn;
+function recommendation(p) {
+  const c = p.call, lc = (r) => /^[A-Z]{2}/.test(r.t) ? r.t : r.t.charAt(0).toLowerCase() + r.t.slice(1);
+  const pos = c.reasons.filter((r) => r.kind === "+").slice(0, 2).map(lc), neg = c.reasons.filter((r) => r.kind === "-").slice(0, 2).map(lc);
+  let s = { APPLY: "Apply.", LOTTERY: "Worth a bid, but expect not to be allotted.", CONSIDER: "A judgement call.", SKIP: "Skip.", WAIT: "Wait for a grey-market quote.", CLOSED: "Bidding has closed." }[c.verdict];
+  if (pos.length) s += ` In its favour: ${pos.join("; ")}.`;
+  if (neg.length) s += ` Against it: ${neg.join("; ")}.`;
+  if (c.verdict === "LOTTERY" && c.ev != null) s += ` At ${oddsText(c.odds).toLowerCase()} odds, the expected gain per application is only ${inr(c.ev)}.`;
+  const r = p.research;
+  if (r && r.grade) s += ` For holding beyond listing, the research view is ${r.longTerm.call.toLowerCase()}: ${r.longTerm.why.charAt(0).toLowerCase() + r.longTerm.why.slice(1)}.`;
+  return s;
+}
+
+/* ---------- today ---------- */
+function renderToday(t) {
+  const L = live(), g = (v) => L.filter((p) => p.call.verdict === v);
+  const ap = g("APPLY"), lo = g("LOTTERY"), co = g("CONSIDER"), sk = g("SKIP").concat(g("WAIT"));
+  $("dateline").textContent = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: IST }) + " · Market brief";
+  const parts = [];
+  if (ap.length) parts.push(`${w(ap.length)} worth applying for`);
+  if (lo.length) parts.push(`${w(lo.length)} lottery bid${lo.length > 1 ? "s" : ""}`);
+  if (co.length) parts.push(`${w(co.length)} to weigh`);
+  if (sk.length) parts.push(`${w(sk.length)} to skip`);
+  $("headline").textContent = !L.length ? "No live IPOs in this segment today." : cap(parts.length > 1 ? parts.slice(0, -1).join(", ") + " and " + parts[parts.length - 1] : parts[0]) + ".";
+  const closing = L.filter((p) => p.st === "open" && p.close === t), lede = [], names = (l) => l.map((p) => esc(p.name)).join(" and ");
+  if (ap.length) lede.push(`The clearest opportunities are ${names(ap)}.`);
+  if (lo.length) lede.push(`${names(lo)} look${lo.length === 1 ? "s" : ""} sound, but allotment odds are slim.`);
+  if (closing.length) lede.push(`${names(closing)} close${closing.length === 1 ? "s" : ""} today at 5 PM.`);
+  $("lede").innerHTML = lede.join(" ");
+  const go = ap.concat(lo), acc = cfg().accounts;
+  const cash = go.reduce((s, p) => s + (p.call.invested || 0), 0) * acc, ev = go.reduce((s, p) => s + (p.call.ev || 0), 0) * acc;
+  const fig = (l, v, h, c) => `<div><div class="l">${l}</div><div class="v num ${c || ""}">${v}</div><div class="h">${h}</div></div>`;
+  $("figures").innerHTML = fig("Cash to bid on the calls", lakh(cash), `${go.length} application${go.length === 1 ? "" : "s"}, blocked about 4 days`)
+    + fig("Expected profit, odds-weighted", inr(ev), "after charges, before tax", sg(ev))
+    + fig("Closing today", String(closing.length), closing.length ? "approve UPI mandates by 5 PM" : "nothing urgent")
+    + `<div><div class="l">GMP accuracy, last 30 days</div><div class="v num" id="accV">—</div><div class="h" id="accH"></div></div>`;
+}
+
+/* ---------- calls ---------- */
+function row(p, t) {
+  const c = p.call, s = c.scenarios, sme = p.segment === "SME", hot = p.st === "open" && p.close === t;
+  return `<button class="row ${c.verdict === "SKIP" || c.verdict === "CLOSED" ? "dim" : ""}" type="button" data-open="${esc(p.id)}" aria-label="${esc(p.name)}: ${LABEL[c.verdict]}. Open analysis">
+    <div><span class="tag t-${c.verdict}">${LABEL[c.verdict]}</span><div class="score">Score ${c.score ?? "—"}${p.research && p.research.grade ? ` · <span title="Fundamental grade within its segment">Grade ${p.research.grade}/5</span>` : ""}</div></div>
+    <div><div class="name">${esc(p.name)}</div><div class="meta"><span class="chip ${sme ? "sme" : ""}">${sme ? esc(p.exchange || "SME") : "Mainboard"}</span>${band(p) ? `<span class="num">${band(p)}</span>` : ""}<span class="${hot ? "hot" : ""}">${esc(when(p, t))}</span>${S.plan.has(p.id) ? `<span class="pos">${ICON.check} In plan</span>` : ""}</div></div>
+    <div class="v num"><b>${p.gmp == null ? "—" : inr(p.gmp)}</b><small>${p.pctv == null ? "no quote yet" : pc(p.pctv) + (p.trend > 0 ? ", rising" : p.trend < 0 ? ", falling" : "")}</small></div>
+    <div class="v num"><b>${oddsText(c.odds)}</b><small>${esc(c.odds.basis)}</small></div>
+    <div class="v num"><b class="${sg(c.ev)}">${c.ev == null ? "—" : inr(c.ev)}</b><small>${c.invested ? "on " + inr(c.invested) : ""}</small></div>
+    <div class="v num"><b>${s ? pc(s.base.pct) : "—"}</b><small>${s ? "bear " + pc(s.bear.pct) : ""}</small></div>
+    <span class="chev" aria-hidden="true">${ICON.chev}</span></button>`;
+}
+function renderCalls(t) {
+  const n = (s) => S.ipos.filter((p) => (s === "All" || p.segment === s) && (p.st === "open" || p.st === "upcoming")).length;
+  $("seg").innerHTML = ["All", "Mainboard", "SME"].map((s) => `<button type="button" data-seg="${s}" aria-pressed="${S.seg === s}">${s}<span class="c">${n(s)}</span></button>`).join("");
+  const L = live().sort((a, b) => ORDER[a.call.verdict] - ORDER[b.call.verdict] || (b.call.score || 0) - (a.call.score || 0));
+  const closed = S.ipos.filter((p) => inSeg(p.segment) && p.st === "closed");
+  $("list").innerHTML = (L.length ? L.map((p) => row(p, t)).join("") : '<div class="empty">No IPOs are open or announced in this segment.</div>')
+    + (closed.length ? `<div class="group-label">Bidding closed, listing soon</div>` + closed.map((p) => row(p, t)).join("") : "");
+}
+
+/* ---------- drawer ---------- */
+function drawerIPO(p) {
+  const t = todayIST(), c = p.call, ins = p.ins || {}, s = c.scenarios, sub = ins.sub || {}, sme = p.segment === "SME";
+  $("dHead").innerHTML = `<span class="tag t-${c.verdict}">${LABEL[c.verdict]}</span><span class="muted" style="font-size:12.5px;margin-left:10px">Score ${c.score ?? "—"} / 100 · confidence ${pr(c.confidence)}</span>
+    <h3 class="dt" id="dTitle">${esc(p.name)}</h3>
+    <div class="dmeta"><span class="chip ${sme ? "sme" : ""}">${sme ? esc(p.exchange || "SME") : "Mainboard"}</span>${band(p) ? `<span class="num">Band ${band(p)}</span>` : ""}<span>${esc(when(p, t))}</span>${ins.loss_making ? "<span>Loss-making</span>" : ins.pe_post ? `<span>P/E ${ins.pe_post.toFixed(0)}x</span>` : ""}</div>`;
+  let range = "";
+  if (s) {
+    const lo = Math.min(0, s.bear.pct) - 5, hi = Math.max(0, s.bull.pct) + 5, X = (v) => ((v - lo) / (hi - lo) * 100).toFixed(1) + "%";
+    range = `<div class="d-sec"><h4>Outcome range if allotted</h4><div class="range" aria-hidden="true"><div class="track"></div><div class="zero" style="left:${X(0)}"></div>
+      <div class="span" style="left:${X(s.bear.pct)};width:calc(${X(s.bull.pct)} - ${X(s.bear.pct)})"></div>
+      <div class="pt" style="left:${X(s.bear.pct)}"></div><div class="pt base" style="left:${X(s.base.pct)}"></div><div class="pt" style="left:${X(s.bull.pct)}"></div></div>
+      <div class="range-l num"><div>Bear<b class="${sg(s.bear.pct)}">${pc(s.bear.pct)}</b>${inr(s.bear.net)}</div><div>Base<b>${pc(s.base.pct)}</b>${inr(s.base.net)}</div><div>Bull<b class="pos">${pc(s.bull.pct)}</b>${inr(s.bull.net)}</div></div>
+      <p class="note">Base blends today's GMP with how similar IPOs actually listed; bear and bull are their worst and best 10%.</p></div>`;
+  }
+  const names = { signal: "GMP signal", history: "History", demand: "Demand", valuation: "Valuation", fundamentals: "Fundamentals", structure: "Structure" };
+  const facs = Object.keys(D.W).map((k) => { const f = c.factors[k];
+    if (!f) return `<div class="fac"><span class="muted">${names[k]}</span><div class="meter"></div><span class="w">${D.W[k]}</span><span class="note">No data</span></div>`;
+    const col = f.s >= 0.65 ? "var(--good)" : f.s >= 0.4 ? "var(--gold)" : "var(--bad)";
+    return `<div class="fac"><span>${names[k]}</span><div class="meter"><i style="width:${Math.round(f.s * 100)}%;background:${col}"></i></div><span class="w">${D.W[k]}</span><span class="note">${esc(f.note)}</span></div>`; }).join("");
+  const fin = ins.financials;
+  const finT = fin && fin.periods ? `<div class="d-sec"><h4>Financials, ₹ crore</h4><div class="scroll-x"><table class="tbl"><thead><tr><th></th>${fin.periods.slice(0, 4).map((x) => `<th>${esc(x.replace(/^\d+ /, ""))}</th>`).join("")}</tr></thead><tbody>`
+    + [["Total Income", "Revenue"], ["Profit After Tax", "Profit"], ["NET Worth", "Net worth"], ["Total Borrowing", "Debt"]].filter(([k]) => fin[k]).map(([k, l]) => `<tr><td>${l}</td>${fin.periods.slice(0, 4).map((_, i) => `<td class="num">${fin[k][i] == null ? "—" : fin[k][i].toLocaleString("en-IN")}</td>`).join("")}</tr>`).join("") + "</tbody></table></div></div>" : "";
+  const prec = ins.precedents && ins.precedents.length ? `<div class="d-sec"><h4>Recent IPOs in the same sector</h4><div class="scroll-x"><table class="tbl"><thead><tr><th>Company</th><th>P/E</th><th>Listing</th><th>Since issue</th></tr></thead><tbody>`
+    + ins.precedents.slice(0, 5).map((x) => `<tr><td>${esc(x.name.replace(/ Ltd\.?$/, ""))}${x.segment === "SME" ? ' <span class="chip sme">SME</span>' : ""}</td><td class="num">${x.pe == null ? "—" : x.pe.toFixed(1)}</td><td class="num ${sg(x.listing_gain_pct)}">${pc(x.listing_gain_pct, 1)}</td><td class="num">${x.ltp && x.price ? pc((x.ltp / x.price - 1) * 100) : "—"}</td></tr>`).join("") + "</tbody></table></div></div>" : "";
+  const demand = sub.qib != null ? `Institutions ${sub.qib}x, HNI ${sub.nii}x, retail ${sub.retail}x` : p.subscription_x != null ? `Total ${p.subscription_x}x` : "Bidding not open yet";
+  const link = safeUrl(p.ch_url) || safeUrl(ins.ch_url) || safeUrl(p.ig_url);
+  $("dBody").innerHTML = `<p class="rec">${esc(recommendation(p))}</p>
+    <div class="d-figs num"><div><div class="l">Grey-market premium</div><div class="v">${p.gmp == null ? "—" : inr(p.gmp)}</div><div class="h">${pc(p.pctv, 1)} on the upper band</div></div>
+      <div><div class="l">Allotment odds</div><div class="v">${oddsText(c.odds)}</div><div class="h">${esc(c.odds.basis)}</div></div>
+      <div><div class="l">Expected per application</div><div class="v ${sg(c.ev)}">${c.ev == null ? "—" : inr(c.ev)}</div><div class="h">odds × base case, after charges</div></div>
+      <div><div class="l">Minimum application</div><div class="v">${c.invested ? inr(c.invested) : "—"}</div><div class="h">${p.lot ? (sme ? "2 lots of " : "1 lot of ") + p.lot + " shares" : ""}</div></div></div>
+    ${range}
+    ${researchHtml(p)}
+    <div class="d-sec"><h4>What drives the listing call</h4><ul class="why">${c.reasons.slice(0, 6).map((r) => `<li><span class="${r.kind === "+" ? "p" : "m"}">${r.kind === "+" ? ICON.plus : ICON.minus}</span><span>${esc(r.t)}</span></li>`).join("") || '<li class="muted">Not enough data yet.</li>'}</ul></div>
+    <div class="d-sec"><h4>Score breakdown · weight</h4>${facs}</div>
+    <div class="d-sec"><h4>Demand and structure</h4><p style="margin:0;font-size:14px">${esc(demand)}${ins.issue_size_cr ? ` · issue ₹${Math.round(ins.issue_size_cr).toLocaleString("en-IN")} Cr, ${Math.round((ins.fresh_cr || 0) / ins.issue_size_cr * 100)}% fresh` : ""}${ins.promoter_post ? ` · promoters ${ins.promoter_pre}% → ${ins.promoter_post}%` : ""}${ins.mcap_cr ? ` · market cap ₹${Math.round(ins.mcap_cr).toLocaleString("en-IN")} Cr` : ""}</p></div>
+    ${finT}${prec}
+    <div class="d-actions"><button class="btn ${S.plan.has(p.id) ? "" : "primary"}" type="button" data-plan="${esc(p.id)}">${S.plan.has(p.id) ? ICON.check + " In your plan" : ICON.plus + " Add to plan"}</button>${link ? `<a class="btn" href="${link}" target="_blank" rel="noopener">Prospectus details ${ICON.ext}</a>` : ""}</div>`;
+}
+function researchHtml(p) {
+  const r = p.research, ins = p.ins || {};
+  if (!r) return "";
+  const v = r.valuation || {}, sp = r.sponsorship || {}, PN = { growth: "Growth", profitability: "Profitability", balance: "Balance sheet", governance: "Governance & issue" };
+  const tone = r.longTerm.call === "Positive" ? "pos" : r.longTerm.call === "Cautious" ? "neg" : "";
+  const bars = Object.keys(D.PILLARS).map((k) => { const f = r.pillars[k];
+    if (!f) return `<div class="fac"><span class="muted">${PN[k]}</span><div class="meter"></div><span class="w">${D.PILLARS[k]}</span><span class="note">Not disclosed</span></div>`;
+    const col = f.s >= 0.65 ? "var(--good)" : f.s >= 0.4 ? "var(--gold)" : "var(--bad)";
+    return `<div class="fac"><span>${PN[k]}</span><div class="meter"><i style="width:${Math.round(f.s * 100)}%;background:${col}"></i></div><span class="w">${D.PILLARS[k]}</span><span class="note">${esc(f.note)}</span></div>`; }).join("");
+  const mult = [v.pe ? ["P/E", v.pe.toFixed(1) + "x", v.peerMed ? `sector IPOs ${v.peerMed.toFixed(0)}x` : ""] : null, v.evEbitda ? ["EV/EBITDA", v.evEbitda.toFixed(1) + "x", ""] : null,
+    v.peg ? ["PEG", v.peg.toFixed(2), "P/E ÷ profit growth"] : null, v.pb ? ["P/B", v.pb.toFixed(1) + "x", ""] : null].filter(Boolean);
+  const cons = sp.consensus, consTxt = cons ? `${cons.subscribe} subscribe · ${cons.may_apply} may apply · ${cons.neutral} neutral · ${cons.avoid} avoid` : "No broker notes yet";
+  const anchors = sp.anchors ? `${sp.anchors} anchors · ${Math.round(sp.longOnly)}% mutual funds and insurers${sp.foreign ? ` · ${Math.round(sp.foreign)}% marquee foreign funds` : ""}` : "Anchor book not yet allotted";
+  return `<div class="d-sec research"><h4>Research view · long term</h4>
+    <div class="rgrade"><div class="gnum">${r.grade ?? "—"}<span>/5</span></div><div><div class="glabel">${r.grade ? D.GRADE[r.grade] + " fundamentals" : "Not graded"}</div><div class="muted" style="font-size:12.5px">${r.relative ? "Graded against recent " + (p.segment === "SME" ? "SME" : "mainboard") + " IPOs" : "Absolute scale"}</div></div>
+      <div class="lt ${tone}"><div class="muted" style="font-size:12px">Long-term view</div><b>${esc(r.longTerm.call)}</b><div style="font-size:12px" class="soft">${esc(r.longTerm.why)}</div></div></div>
+    ${bars}
+    <div class="vbox"><div class="vlabel">Valuation: <b>${esc(v.label || "Not enough data")}</b></div>${mult.length ? `<div class="mults num">${mult.map(([a, b, c]) => `<div><span class="muted">${a}</span><b>${b}</b><small>${c}</small></div>`).join("")}</div>` : ""}</div>
+    ${r.notes.length ? `<ul class="why" style="margin-top:14px">${r.notes.slice(0, 5).map((n) => `<li><span class="${n.kind === "+" ? "p" : "m"}">${n.kind === "+" ? ICON.plus : ICON.minus}</span><span>${esc(n.t)}</span></li>`).join("")}</ul>` : ""}
+    <p style="margin:14px 0 0;font-size:13.5px"><span class="muted">Anchor book:</span> ${esc(anchors)}<br><span class="muted">Broker notes:</span> ${esc(consTxt)}${ins.objects ? `<br><span class="muted">Use of proceeds:</span> ${esc(ins.objects.length > 220 ? ins.objects.slice(0, 220) + "…" : ins.objects)}` : ""}</p>
+  </div>`;
+}
+function drawerPlan() {
+  const t = todayIST(), acc = cfg().accounts;
+  const items = S.ipos.filter((p) => S.plan.has(p.id) && p.st !== "listed" && p.call);
+  $("dHead").innerHTML = `<div class="kicker">Your plan</div><h3 class="dt" id="dTitle">Cash needed, and when it comes back</h3>`;
+  if (!items.length) { $("dBody").innerHTML = `<p class="soft">Open any IPO and choose <b>Add to plan</b>. The plan shows how much cash each bid blocks, when it is refunded if you are not allotted, and when it returns after a sale.</p>`; return; }
+  const rows = items.map((p) => { const amt = (p.call.invested || cfg().ticket[p.segment]) * acc, bid = p.close && p.close >= t ? p.close : t;
+    return { p, amt, bid, refund: B.addWd(bid, 2), release: B.addWd(p.listing || B.addWd(bid, 3), 1), ev: (p.call.ev || 0) * acc }; }).sort((a, b) => (a.bid < b.bid ? -1 : 1));
+  let peak = 0, peakDay = null;
+  for (let d = Math.min(...rows.map((r) => dnum(r.bid))); d <= Math.max(...rows.map((r) => dnum(r.release))); d++) {
+    const v = rows.reduce((s, r) => s + (d >= dnum(r.bid) && d < dnum(r.refund) ? r.amt : 0), 0);
+    if (v > peak) { peak = v; peakDay = new Date(d * 864e5).toISOString().slice(0, 10); }
+  }
+  const ev = rows.reduce((s, r) => s + r.ev, 0);
+  $("dBody").innerHTML = `<div class="d-figs num"><div><div class="l">Peak cash blocked</div><div class="v">${lakh(peak)}</div><div class="h">on ${dd(peakDay)}</div></div>
+      <div><div class="l">Expected profit</div><div class="v ${sg(ev)}">${inr(ev)}</div><div class="h">odds-weighted, ${rows.length * acc} application${rows.length * acc === 1 ? "" : "s"}</div></div></div>
+    <div class="scroll-x"><table class="tbl"><thead><tr><th>IPO</th><th>Amount</th><th>Bid by</th><th>Refund</th><th>Back after sale</th><th></th></tr></thead><tbody>`
+    + rows.map((r) => `<tr><td><span class="tag t-${r.p.call.verdict}" style="font-weight:500">${esc(r.p.name)}</span></td><td class="num">${inr(r.amt)}</td><td class="num">${dd(r.bid)}</td><td class="num">${dd(r.refund)}</td><td class="num">${dd(r.release)}</td><td><button class="icon-btn" style="width:30px;height:30px" type="button" data-plan="${esc(r.p.id)}" aria-label="Remove ${esc(r.p.name)} from plan">${ICON.minus}</button></td></tr>`).join("")
+    + `</tbody></table></div><p class="note">Refund applies if you are not allotted (about two working days after bidding closes). If allotted, cash returns the day after you sell on listing.</p>`;
+}
+let lastFocus = null;
+function openDrawer(kind, id) {
+  if (kind === "ipo") { const p = S.ipos.find((x) => x.id === id && x.call); if (!p) return; lastFocus = document.activeElement; S.open = { kind, id }; drawerIPO(p); history.replaceState(null, "", "#ipo=" + encodeURIComponent(id)); }
+  else { lastFocus = document.activeElement; S.open = { kind }; drawerPlan(); history.replaceState(null, "", "#plan"); }
+  $("layer").classList.add("open"); document.body.style.overflow = "hidden";
+  $("dBody").scrollTop = 0; document.querySelector(".drawer").focus();
+}
+function closeDrawer() {
+  if (!S.open) return;
+  S.open = null; $("layer").classList.remove("open"); document.body.style.overflow = "";
+  history.replaceState(null, "", location.pathname + location.search);
+  if (lastFocus) lastFocus.focus();
+}
+
+/* ---------- track record ---------- */
+function realRows(t) {
+  const cut = dnum(t) - 30;
+  return S.rows.filter((r) => inSeg(r.segment) && r.gainPct != null && dnum(r.listing) >= cut && dnum(r.listing) <= dnum(t)).map((r) => {
+    const ins = S.insByIg.get(r.id), retail = ins && ins.sub && ins.sub.retail, odds = retail ? Math.min(1, 1 / retail) : r.p;
+    return Object.assign({}, r, { gEve: r.gmpList != null ? r.gmpList / r.price * 100 : null, gClose: r.sigKind === "close" ? r.gmpPct : null, retail, odds, realistic: odds * r.netAllot, rec: S.recById.get(r.id) });
+  }).sort((a, b) => (a.listing < b.listing ? 1 : -1));
+}
+function spark(rec, price, actual) {
+  const pts = ((rec && rec.series) || []).filter((x) => x[1] != null).map((x) => [dnum(x[0]), x[1] / price * 100]);
+  const W = 120, H = 30;
+  if (!pts.length) return `<svg class="spark" width="${W}" height="${H}" aria-hidden="true"></svg>`;
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]).concat([actual]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs) + 1, y0 = Math.min(0, ...ys), y1 = Math.max(1, ...ys);
+  const X = (x) => 3 + (x - x0) / Math.max(1, x1 - x0) * (W - 14), Y = (y) => 4 + (1 - (y - y0) / (y1 - y0)) * (H - 8);
+  return `<svg class="spark" width="${W}" height="${H}" role="img" aria-label="GMP path, then actual listing ${pc(actual, 1)}"><line x1="0" x2="${W}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="var(--line)"/>`
+    + `<path d="${pts.map((p, i) => `${i ? "L" : "M"}${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join("")}" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/>`
+    + `<circle cx="${W - 5}" cy="${Y(actual).toFixed(1)}" r="3.5" fill="${actual >= 0 ? "var(--good)" : "var(--bad)"}"/></svg>`;
+}
+function scatter(rows) {
+  const pts = rows.filter((r) => r.gEve != null);
+  if (pts.length < 3) return '<div class="empty">Not enough listings yet.</div>';
+  const W = 520, H = 290, L = 42, R = 8, T = 8, Bm = 34;
+  const lo = Math.min(-20, ...pts.map((r) => Math.min(r.gEve, r.gainPct))), hi = Math.max(40, ...pts.map((r) => Math.max(r.gEve, r.gainPct)));
+  const X = (v) => L + (v - lo) / (hi - lo) * (W - L - R), Y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - Bm);
+  const ticks = [...new Set([Math.ceil(lo / 20) * 20, 0, Math.round(hi / 2 / 10) * 10, Math.floor(hi / 10) * 10])];
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="GMP versus actual listing gain for ${pts.length} IPOs">`
+    + ticks.map((v) => `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${Y(v) + 4}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${v}%</text><text x="${X(v)}" y="${H - 18}" font-size="10.5" text-anchor="middle" fill="var(--ink-3)">${v}%</text>`).join("")
+    + `<line x1="${X(lo)}" y1="${Y(lo)}" x2="${X(hi)}" y2="${Y(hi)}" stroke="var(--gold)" stroke-dasharray="4 4"/>`
+    + pts.map((r) => `<circle cx="${X(r.gEve).toFixed(1)}" cy="${Y(r.gainPct).toFixed(1)}" r="4.5" fill="${r.segment === "SME" ? "var(--plum)" : "var(--ink)"}" fill-opacity=".7"><title>${esc(r.name)}: GMP ${pc(r.gEve)}, listed ${pc(r.gainPct, 1)}</title></circle>`).join("")
+    + `<text x="${(L + W) / 2}" y="${H - 2}" font-size="11" text-anchor="middle" fill="var(--ink-2)">GMP before listing</text></svg>`
+    + `<div class="note" style="display:flex;gap:16px"><span><svg width="10" height="10" aria-hidden="true"><circle cx="5" cy="5" r="4.5" fill="var(--ink)" fill-opacity=".7"/></svg> Mainboard</span><span><svg width="10" height="10" aria-hidden="true"><circle cx="5" cy="5" r="4.5" fill="var(--plum)" fill-opacity=".7"/></svg> SME</span></div>`;
+}
+function renderRecord(t) {
+  const rows = realRows(t), avg = (a, f) => a.length ? a.reduce((s, x) => s + f(x), 0) / a.length : null;
+  $("recordN").textContent = rows.length ? `${rows.length} listings` : "";
+  $("allLbl").textContent = `Show all ${rows.length} listings`;
+  if (!rows.length) { $("recordAnswer").textContent = "No listings in the last 30 days for this segment."; $("scatter").innerHTML = ""; $("compare").innerHTML = ""; $("real").innerHTML = ""; return; }
+  const withG = rows.filter((r) => r.gEve != null), miss = avg(withG, (r) => Math.abs(r.gEve - r.gainPct));
+  const dir = withG.length ? withG.filter((r) => (r.gEve > 2) === (r.gainPct > 0)).length / withG.length : null;
+  const fantasy = rows.reduce((s, r) => s + r.netAllot, 0), real = rows.reduce((s, r) => s + r.realistic, 0);
+  if ($("accV")) { $("accV").textContent = miss == null ? "—" : "±" + miss.toFixed(0) + " pts"; $("accH").textContent = dir == null ? "" : `direction right ${pr(dir)} of the time`; }
+  $("recordAnswer").innerHTML = `GMP called the direction right <b>${pr(dir)}</b> of the time, but typically missed the size by <b>${miss == null ? "—" : miss.toFixed(0)} points</b>. Applying to every listing would have made <b>${lakh(fantasy)}</b> if you were allotted each time; with real allotment odds it made <b class="${sg(real)}">${inr(real)}</b>.`;
+  $("scatter").innerHTML = scatter(rows);
+  const seg = (s) => { const l = rows.filter((r) => r.segment === s); if (!l.length) return "";
+    const f = l.reduce((a, r) => a + r.netAllot, 0), rl = l.reduce((a, r) => a + r.realistic, 0), exp = l.reduce((a, r) => a + r.odds, 0);
+    return `<div class="seg-row"><div><div class="sname">${s}</div><div class="l">${l.length} IPOs, ${exp.toFixed(1)} allotments expected</div></div>
+      <div><div class="l">If allotted every time</div><div class="v num">${lakh(f)}</div></div><div><div class="l">With real odds</div><div class="v num ${sg(rl)}">${inr(rl)}</div></div></div>`; };
+  $("compare").innerHTML = seg("Mainboard") + seg("SME") + `<p class="note" style="margin:0">The gap is adverse selection: hot IPOs are oversubscribed, so you are rarely allotted in them, while you usually are in weak ones.</p>`;
+  $("real").innerHTML = `<thead><tr><th>IPO</th><th>Listed</th><th style="text-align:left">GMP path, then listing</th><th>GMP at close</th><th>GMP before listing</th><th>Actual</th><th>Retail sub.</th><th>Odds</th><th>If allotted</th><th>Realistic</th></tr></thead><tbody>`
+    + rows.map((r) => `<tr><td>${esc(r.name)} ${r.segment === "SME" ? '<span class="chip sme">SME</span>' : ""}</td><td class="num">${dd(r.listing)}</td><td style="text-align:left">${spark(r.rec, r.price, r.gainPct)}</td>`
+      + `<td class="num">${r.gClose == null ? "—" : pc(r.gClose)}</td><td class="num">${r.gEve == null ? "—" : pc(r.gEve)}</td><td class="num ${sg(r.gainPct)}"><b>${pc(r.gainPct, 1)}</b></td>`
+      + `<td class="num">${r.retail ? r.retail + "x" : r.subClose ? r.subClose + "x" : "—"}</td><td class="num">${r.odds >= 0.995 ? "≈100%" : "1 in " + Math.round(1 / r.odds)}</td>`
+      + `<td class="num ${sg(r.netAllot)}">${inr(r.netAllot)}</td><td class="num ${sg(r.realistic)}"><b>${inr(r.realistic)}</b></td></tr>`).join("") + "</tbody>";
+}
+
+/* ---------- status ---------- */
+function renderStatus() {
+  const snap = S.snap || {}, gen = snap.generated_at ? Date.parse(snap.generated_at) : null;
+  let txt, dot = "";
+  if (S.live.ok) { txt = "Live · " + ago(Date.now() - S.live.at); dot = "live"; }
+  else if (gen) { txt = "Updated " + ago(Date.now() - gen); dot = S.live.ok === false ? "warn" : ""; }
+  else txt = snap.error ? "Data unavailable" : "Loading";
+  $("liveDot").className = "dot " + dot; $("liveTxt").textContent = txt;
+  const src = snap.sources || {}, names = { investorgain: "InvestorGain", chittorgarh: "Chittorgarh", ipowatch: "IPO Watch" };
+  const failed = Object.keys(src).filter((k) => src[k].ok === false).map((k) => names[k]);
+  $("srcLine").textContent = S.rows.length ? `${S.rows.length} IPOs of history · ${Object.keys(S.ins).length} analysed in depth` : "";
+  const msgs = [];
+  if (snap.error && !S.snapIpos.length) msgs.push("The data snapshot could not be loaded." + (S.live.ok ? " Showing the live feed only." : ""));
+  if (gen && (Date.now() - gen) / 36e5 > STALE_HOURS) msgs.push("The snapshot has not changed for over a day. This is usually a quiet market; otherwise check the GitHub Actions run.");
+  if (failed.length) msgs.push(`The last refresh could not reach ${failed.join(", ")}.`);
+  $("banner").innerHTML = msgs.map((m) => `<div class="banner">${esc(m)}</div>`).join("");
+  $("planN").textContent = S.ipos.filter((p) => S.plan.has(p.id) && p.st !== "listed").length;
+}
+function renderAll() {
+  const t = todayIST();
+  renderStatus(); renderToday(t); renderCalls(t); renderRecord(t);
+  if (S.open) { if (S.open.kind === "plan") drawerPlan(); else { const p = S.ipos.find((x) => x.id === S.open.id && x.call); p ? drawerIPO(p) : closeDrawer(); } }
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", (e) => {
+  const o = e.target.closest("[data-open]"); if (o) return openDrawer("ipo", o.dataset.open);
+  if (e.target.closest("[data-close]")) return closeDrawer();
+  const pl = e.target.closest("[data-plan]");
+  if (pl) { const id = pl.dataset.plan; S.plan.has(id) ? S.plan.delete(id) : S.plan.add(id); save(); renderAll(); return; }
+  const s = e.target.closest("[data-seg]"); if (s) { S.seg = s.dataset.seg; save(); renderAll(); }
+});
+$("planBtn").addEventListener("click", () => openDrawer("plan"));
+document.addEventListener("keydown", (e) => {
+  if (!S.open) return;
+  if (e.key === "Escape") return closeDrawer();
+  if (e.key === "Tab") { const f = [...document.querySelectorAll(".drawer button, .drawer a[href]")]; if (!f.length) return;
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); } }
+});
+const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("on", a.dataset.nav === en.target.id)); }), { rootMargin: "-40% 0px -55% 0px" });
+["today", "calls", "record"].forEach((id) => io.observe($(id)));
+
+let busy = false;
+async function refresh(both = true) {
+  if (busy) return; busy = true; $("refreshBtn").setAttribute("aria-busy", "true");
+  try { await Promise.all([both ? loadSnapshot() : null, loadLive()]); compose(); renderAll(); }
+  finally { busy = false; $("refreshBtn").removeAttribute("aria-busy"); }
+}
+$("refreshBtn").addEventListener("click", () => refresh(true));
+let lastSnap = Date.now(), lastLive = Date.now();
+setInterval(() => {
+  if (document.visibilityState !== "visible") return;
+  const now = Date.now();
+  if (now - lastSnap > SNAP_EVERY) { lastSnap = lastLive = now; refresh(true); }
+  else if (now - lastLive > LIVE_EVERY) { lastLive = now; refresh(false); }
+  else renderStatus();
+}, 30e3);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && Date.now() - lastLive > 60e3) { lastSnap = lastLive = Date.now(); refresh(true); } });
+(async () => {
+  await loadStatic(); await refresh(true);
+  const h = decodeURIComponent(location.hash);
+  if (h.startsWith("#ipo=")) openDrawer("ipo", h.slice(5)); else if (h === "#plan") openDrawer("plan");
+})();
+</script>
+</body>
+</html>
