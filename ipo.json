@@ -1,30 +1,30 @@
 {
- "generated_at": "2026-11-07T13:34:16+05:30",
+ "generated_at": "2026-11-07T20:47:34+05:30",
  "sources": {
   "investorgain": {
    "ok": true,
    "rows": 25,
-   "fetched_at": "2026-11-07T13:34:16+05:30"
+   "fetched_at": "2026-11-07T20:47:34+05:30"
   },
   "chittorgarh": {
    "ok": true,
    "rows": 307,
-   "fetched_at": "2026-11-07T13:34:16+05:30"
+   "fetched_at": "2026-11-07T20:47:34+05:30"
   },
   "ipowatch": {
    "ok": true,
    "rows": 0,
-   "fetched_at": "2026-11-07T13:34:16+05:30"
+   "fetched_at": "2026-11-07T20:47:34+05:30"
   },
   "backup": {
    "ok": true,
    "rows": 2,
-   "fetched_at": "2026-11-07T13:34:16+05:30"
+   "fetched_at": "2026-11-07T20:47:34+05:30"
   }
  },
  "ipos": [
-{"ig_id":2297,"name":"Vedant Poly Fabs","segment":"SME","exchange":"NSE SME","gmp":1.0,"gmp_pct":1.06,"gmp_low":1.0,"gmp_high":15.0,"gmp_open":15.0,"gmp_close":1.0,"subscription_x":1.9,"price":94.0,"lot":1200,"issue_size_cr":53.82,"pe":12.62,"rating":1,"open":"2026-11-02","close":"2026-11-04","allotment":"2026-11-05","listing":"2026-11-09","gmp_updated":"7-Nov 13:02","ig_url":"https://www.investorgain.com/gmp/vedant-poly-fabs-ipo/2297/","ch_id":3143,"ch_url":"https://www.chittorgarh.com/ipo/vedant-poly-fabs-ipo/3143/","price_low":94.0,"price_high":94.0,"fresh_cr":48.14,"ofs_cr":5.67,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"Affinity Global","gmp_alt":{"gmp":1.0,"pct":1.06,"source":"Backup site"},"iw_url":null,"status":"closed","id":"ig2297"},
-{"ig_id":2375,"name":"Antala Industries","segment":"SME","exchange":"BSE SME","gmp":0.0,"gmp_pct":0.0,"gmp_low":0.0,"gmp_high":0.0,"subscription_x":12.79,"price":66.0,"lot":2000,"issue_size_cr":21.82,"pe":13.52,"rating":1,"open":"2026-10-29","close":"2026-11-05","allotment":"2026-11-06","listing":"2026-11-11","gmp_updated":"7-Nov 12:56","ig_url":"https://www.investorgain.com/gmp/antala-industries-ipo/2375/","ch_id":3221,"ch_url":"https://www.chittorgarh.com/ipo/antala-industries-ipo/3221/","price_low":66.0,"price_high":66.0,"fresh_cr":21.82,"pricing":"Bookbuilding","venue":"BSE SME","lead_manager":"Vatsa Capital Venture Pvt.Ltd.","gmp_alt":{"gmp":0.0,"pct":0.0,"source":"Backup site"},"iw_url":null,"status":"closed","id":"ig2375"},
+{"ig_id":2297,"name":"Vedant Poly Fabs","segment":"SME","exchange":"NSE SME","gmp":1.0,"gmp_pct":1.06,"gmp_low":1.0,"gmp_high":15.0,"gmp_open":15.0,"gmp_close":1.0,"subscription_x":1.9,"price":94.0,"lot":1200,"issue_size_cr":53.82,"pe":12.62,"rating":1,"open":"2026-11-02","close":"2026-11-04","allotment":"2026-11-05","listing":"2026-11-09","gmp_updated":"7-Nov 20:02","ig_url":"https://www.investorgain.com/gmp/vedant-poly-fabs-ipo/2297/","ch_id":3143,"ch_url":"https://www.chittorgarh.com/ipo/vedant-poly-fabs-ipo/3143/","price_low":94.0,"price_high":94.0,"fresh_cr":48.14,"ofs_cr":5.67,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"Affinity Global","gmp_alt":{"gmp":1.0,"pct":1.06,"source":"Backup site"},"iw_url":null,"status":"closed","id":"ig2297"},
+{"ig_id":2375,"name":"Antala Industries","segment":"SME","exchange":"BSE SME","gmp":0.0,"gmp_pct":0.0,"gmp_low":0.0,"gmp_high":0.0,"subscription_x":12.79,"price":66.0,"lot":2000,"issue_size_cr":21.82,"pe":13.52,"rating":1,"open":"2026-10-29","close":"2026-11-05","allotment":"2026-11-06","listing":"2026-11-11","gmp_updated":"7-Nov 20:02","ig_url":"https://www.investorgain.com/gmp/antala-industries-ipo/2375/","ch_id":3221,"ch_url":"https://www.chittorgarh.com/ipo/antala-industries-ipo/3221/","price_low":66.0,"price_high":66.0,"fresh_cr":21.82,"pricing":"Bookbuilding","venue":"BSE SME","lead_manager":"Vatsa Capital Venture Pvt.Ltd.","gmp_alt":{"gmp":0.0,"pct":0.0,"source":"Backup site"},"iw_url":null,"status":"closed","id":"ig2375"},
 {"ig_id":1965,"name":"Maxwell Engineering Solutions","segment":"SME","exchange":"NSE SME","gmp":105.0,"gmp_pct":66.46,"gmp_low":27.0,"gmp_high":113.0,"gmp_open":70.0,"gmp_close":80.0,"subscription_x":536.8,"price":158.0,"lot":800,"issue_size_cr":54.12,"pe":13.39,"rating":5,"anchor":true,"open":"2026-10-30","close":"2026-11-03","allotment":"2026-11-04","listing":"2026-11-06","gmp_updated":"6-Nov 9:37","listing_price":300.2,"listing_gain_pct":90.0,"ig_url":"https://www.investorgain.com/gmp/maxwell-engineering-solutions-ipo/1965/","ch_id":2704,"ch_url":"https://www.chittorgarh.com/ipo/maxwell-engineering-solutions-ipo/2704/","price_low":158.0,"price_high":158.0,"fresh_cr":54.12,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"JDA Capital Services","status":"listed","id":"ig1965"},
 {"ig_id":1849,"name":"BLS Polymers","segment":"Mainboard","gmp":69.0,"gmp_pct":46.0,"gmp_low":18.0,"gmp_high":70.0,"gmp_open":44.0,"gmp_close":68.0,"subscription_x":241.22,"price":150.0,"lot":100,"issue_size_cr":255.0,"pe":25.0,"rating":4,"anchor":true,"open":"2026-10-27","close":"2026-10-29","allotment":"2026-10-30","listing":"2026-11-03","gmp_updated":"3-Nov 9:37","listing_price":248.0,"listing_gain_pct":65.33,"ig_url":"https://www.investorgain.com/gmp/bls-polymers-ipo/1849/","ch_id":2559,"ch_url":"https://www.chittorgarh.com/ipo/bls-polymers-ipo/2559/","price_low":150.0,"price_high":150.0,"fresh_cr":255.0,"pricing":"Bookbuilding","venue":"BSE, NSE","lead_manager":"Unistone Capital","status":"listed","id":"ig1849"},
 {"ig_id":2241,"name":"HGS (India)","segment":"SME","exchange":"NSE SME","gmp":27.0,"gmp_pct":22.5,"gmp_low":25.0,"gmp_high":30.0,"gmp_open":30.0,"gmp_close":25.0,"subscription_x":248.58,"price":120.0,"lot":1200,"issue_size_cr":32.82,"pe":8.8,"rating":4,"anchor":true,"open":"2026-10-30","close":"2026-11-03","allotment":"2026-11-04","listing":"2026-11-06","gmp_updated":"6-Nov 9:37","listing_price":160.0,"listing_gain_pct":33.33,"ig_url":"https://www.investorgain.com/gmp/hgs-india-ipo/2241/","ch_id":2981,"ch_url":"https://www.chittorgarh.com/ipo/hgs-india-ipo/2981/","price_low":120.0,"price_high":120.0,"fresh_cr":26.17,"ofs_cr":6.65,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"Hem Securities","status":"listed","id":"ig2241"},
