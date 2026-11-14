@@ -1,31 +1,31 @@
 {
- "generated_at": "2026-11-14T03:48:46+05:30",
+ "generated_at": "2026-11-14T13:52:31+05:30",
  "sources": {
   "investorgain": {
    "ok": true,
    "rows": 25,
-   "fetched_at": "2026-11-14T03:48:46+05:30"
+   "fetched_at": "2026-11-14T13:52:31+05:30"
   },
   "chittorgarh": {
    "ok": true,
-   "rows": 309,
-   "fetched_at": "2026-11-14T03:48:46+05:30"
+   "rows": 310,
+   "fetched_at": "2026-11-14T13:52:31+05:30"
   },
   "ipowatch": {
    "ok": true,
    "rows": 0,
-   "fetched_at": "2026-11-14T03:48:46+05:30"
+   "fetched_at": "2026-11-14T13:52:31+05:30"
   },
   "backup": {
    "ok": true,
    "rows": 3,
-   "fetched_at": "2026-11-14T03:48:46+05:30"
+   "fetched_at": "2026-11-14T13:52:31+05:30"
   }
  },
  "ipos": [
-{"ig_id":2067,"name":"Crystal Crop Protection","segment":"Mainboard","gmp":40.0,"gmp_pct":14.71,"gmp_low":40.0,"gmp_high":40.0,"price":272.0,"lot":55,"issue_size_cr":455.49,"pe":28.19,"rating":3,"anchor":true,"open":"2026-11-18","close":"2026-11-20","allotment":"2026-11-23","listing":"2026-11-26","gmp_updated":"13-Nov 23:37","ig_url":"https://www.investorgain.com/gmp/crystal-crop-protection-ipo/2067/","ch_id":2813,"ch_url":"https://www.chittorgarh.com/ipo/crystal-crop-protection-ipo/2813/","price_low":259.0,"price_high":272.0,"fresh_cr":354.77,"ofs_cr":100.71,"pricing":"Bookbuilding","venue":"BSE, NSE","lead_manager":"IIFL Capital","gmp_alt":{"gmp":40.0,"pct":14.71,"source":"Backup site"},"iw_url":null,"status":"upcoming","id":"ig2067"},
-{"ig_id":1818,"name":"Watrana Rentals","segment":"SME","exchange":"NSE SME","gmp":16.0,"gmp_pct":6.53,"gmp_low":16.0,"gmp_high":16.0,"price":245.0,"lot":600,"issue_size_cr":113.93,"pe":9.61,"rating":2,"anchor":true,"open":"2026-11-19","close":"2026-11-23","allotment":"2026-11-25","listing":"2026-11-27","gmp_updated":"13-Nov 23:37","ig_url":"https://www.investorgain.com/gmp/watrana-rentals-ipo/1818/","ch_id":2503,"ch_url":"https://www.chittorgarh.com/ipo/watrana-rentals-ipo/2503/","price_low":232.0,"price_high":245.0,"fresh_cr":113.93,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"Oneview Corporate","gmp_alt":{"gmp":16.0,"pct":6.53,"source":"Backup site"},"iw_url":null,"status":"upcoming","id":"ig1818"},
-{"name":"Mahanadi Coalfields","segment":"Mainboard","gmp":20.0,"gmp_source":"Backup site","price":0.0,"dates_text":"Nov 19, 2026 – Nov 23, 2026","status":"upcoming","id":"mahanadi-coalfield"},
+{"ig_id":2067,"name":"Crystal Crop Protection","segment":"Mainboard","gmp":27.0,"gmp_pct":9.93,"gmp_low":27.0,"gmp_high":40.0,"price":272.0,"lot":55,"issue_size_cr":455.49,"pe":28.19,"rating":2,"anchor":true,"open":"2026-11-18","close":"2026-11-20","allotment":"2026-11-23","listing":"2026-11-26","gmp_updated":"14-Nov 13:37","ig_url":"https://www.investorgain.com/gmp/crystal-crop-protection-ipo/2067/","ch_id":2813,"ch_url":"https://www.chittorgarh.com/ipo/crystal-crop-protection-ipo/2813/","price_low":259.0,"price_high":272.0,"fresh_cr":354.77,"ofs_cr":100.71,"pricing":"Bookbuilding","venue":"BSE, NSE","lead_manager":"IIFL Capital","gmp_alt":{"gmp":27.0,"pct":9.93,"source":"Backup site"},"iw_url":null,"status":"upcoming","id":"ig2067"},
+{"ig_id":1818,"name":"Watrana Rentals","segment":"SME","exchange":"NSE SME","gmp":18.0,"gmp_pct":7.35,"gmp_low":16.0,"gmp_high":18.0,"price":245.0,"lot":600,"issue_size_cr":113.93,"pe":9.61,"rating":2,"anchor":true,"open":"2026-11-19","close":"2026-11-23","allotment":"2026-11-25","listing":"2026-11-27","gmp_updated":"14-Nov 13:37","ig_url":"https://www.investorgain.com/gmp/watrana-rentals-ipo/1818/","ch_id":2503,"ch_url":"https://www.chittorgarh.com/ipo/watrana-rentals-ipo/2503/","price_low":232.0,"price_high":245.0,"fresh_cr":113.93,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"Oneview Corporate","gmp_alt":{"gmp":18.0,"pct":7.35,"source":"Backup site"},"iw_url":null,"status":"upcoming","id":"ig1818"},
+{"ig_id":2401,"name":"Mahanadi Coalfields","segment":"Mainboard","gmp":12.5,"gmp_pct":0.0,"gmp_low":12.5,"gmp_high":12.5,"price":0.0,"rating":1,"anchor":true,"open":"2026-11-19","close":"2026-11-23","allotment":"2026-11-25","listing":"2026-11-27","gmp_updated":"14-Nov 13:37","ig_url":"https://www.investorgain.com/gmp/mahanadi-coalfields-ipo/2401/","ch_id":3247,"ch_url":"https://www.chittorgarh.com/ipo/mahanadi-coalfields-ipo/3247/","pricing":"Bookbuilding","venue":"BSE, NSE","lead_manager":"SBICAP","gmp_alt":{"gmp":12.5,"source":"Backup site"},"iw_url":null,"status":"upcoming","id":"ig2401"},
 {"ig_id":1965,"name":"Maxwell Engineering Solutions","segment":"SME","exchange":"NSE SME","gmp":105.0,"gmp_pct":66.46,"gmp_low":27.0,"gmp_high":113.0,"gmp_open":70.0,"gmp_close":80.0,"subscription_x":536.8,"price":158.0,"lot":800,"issue_size_cr":54.12,"pe":13.39,"rating":5,"anchor":true,"open":"2026-10-30","close":"2026-11-03","allotment":"2026-11-04","listing":"2026-11-06","gmp_updated":"6-Nov 9:37","listing_price":300.2,"listing_gain_pct":90.0,"ig_url":"https://www.investorgain.com/gmp/maxwell-engineering-solutions-ipo/1965/","ch_id":2704,"ch_url":"https://www.chittorgarh.com/ipo/maxwell-engineering-solutions-ipo/2704/","price_low":158.0,"price_high":158.0,"fresh_cr":54.12,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"JDA Capital Services","status":"listed","id":"ig1965"},
 {"ig_id":1849,"name":"BLS Polymers","segment":"Mainboard","gmp":69.0,"gmp_pct":46.0,"gmp_low":18.0,"gmp_high":70.0,"gmp_open":44.0,"gmp_close":68.0,"subscription_x":241.22,"price":150.0,"lot":100,"issue_size_cr":255.0,"pe":25.0,"rating":4,"anchor":true,"open":"2026-10-27","close":"2026-10-29","allotment":"2026-10-30","listing":"2026-11-03","gmp_updated":"3-Nov 9:37","listing_price":248.0,"listing_gain_pct":65.33,"ig_url":"https://www.investorgain.com/gmp/bls-polymers-ipo/1849/","ch_id":2559,"ch_url":"https://www.chittorgarh.com/ipo/bls-polymers-ipo/2559/","price_low":150.0,"price_high":150.0,"fresh_cr":255.0,"pricing":"Bookbuilding","venue":"BSE, NSE","lead_manager":"Unistone Capital","status":"listed","id":"ig1849"},
 {"ig_id":2241,"name":"HGS (India)","segment":"SME","exchange":"NSE SME","gmp":27.0,"gmp_pct":22.5,"gmp_low":25.0,"gmp_high":30.0,"gmp_open":30.0,"gmp_close":25.0,"subscription_x":248.58,"price":120.0,"lot":1200,"issue_size_cr":32.82,"pe":8.8,"rating":4,"anchor":true,"open":"2026-10-30","close":"2026-11-03","allotment":"2026-11-04","listing":"2026-11-06","gmp_updated":"6-Nov 9:37","listing_price":160.0,"listing_gain_pct":33.33,"ig_url":"https://www.investorgain.com/gmp/hgs-india-ipo/2241/","ch_id":2981,"ch_url":"https://www.chittorgarh.com/ipo/hgs-india-ipo/2981/","price_low":120.0,"price_high":120.0,"fresh_cr":26.17,"ofs_cr":6.65,"pricing":"Bookbuilding","venue":"NSE SME","lead_manager":"Hem Securities","status":"listed","id":"ig2241"},
