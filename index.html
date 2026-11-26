@@ -282,7 +282,7 @@ function band(p) {
   return lo && hi && lo !== hi ? inr(lo) + "–" + inr(hi).slice(1) : hi ? inr(hi) : null;
 }
 function when(p, t) {
-  if (p.st === "open") return p.close === t ? "Closes today, 5 PM" : "Closes " + dd(p.close) + " (" + rel(p.close, t) + ")";
+  if (p.st === "open") return !p.close ? "Open now" : p.close === t ? "Closes today, 5 PM" : "Closes " + dd(p.close) + " (" + rel(p.close, t) + ")";
   if (p.st === "upcoming") return p.open ? "Opens " + dd(p.open) + " (" + rel(p.open, t) + ")" : "Dates to be announced";
   if (p.st === "closed") return p.listing ? "Lists " + dd(p.listing) : "Awaiting listing";
   return "";
